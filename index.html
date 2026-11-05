@@ -1,0 +1,2564 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html><!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MK 2D/3D - Local Storage Admin System</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #131b2e;
+            --accent-gold: #fbbf24;
+            --text-main: #ffffff;
+            --text-sub: #94a3b8;
+            --border-color: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding-bottom: 40px;
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        /* LOGIN SCREEN STYLES */
+        #login-screen {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            z-index: 5000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px 20px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .login-card h2 {
+            color: var(--accent-gold);
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .login-card p {
+            color: var(--text-sub);
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .login-input-group {
+            text-align: left;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .login-input-group label {
+            font-size: 13px;
+            color: var(--text-sub);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .login-input {
+            width: 100%;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px 45px 12px 15px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .login-input:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 34px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-sub);
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #0b0f19;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .register-link-text {
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--text-sub);
+        }
+
+        .register-link-text span {
+            color: var(--accent-gold);
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Top Header Profile Section */
+        .header-profile {
+            background: linear-gradient(135deg, #1a233a, #0b0f19);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .settings-icon {
+            font-size: 22px;
+            color: var(--text-sub);
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .container {
+            padding: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Balance Card */
+        .balance-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .balance-card p {
+            font-size: 15px;
+            color: var(--text-sub);
+            display: inline-block;
+        }
+
+        .eye-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .balance-card span {
+            font-size: 18px;
+            color: var(--text-main);
+            font-weight: bold;
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* Rates Banner Box */
+        .promo-banner {
+            background: linear-gradient(135deg, #831843, #311026);
+            border: 1px solid #db2777;
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .rates-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 14px;
+            color: var(--text-sub);
+            text-align: center;
+        }
+
+        .rates-grid span strong {
+            color: #fef08a;
+        }
+
+        .notice-bar {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        /* Quick Action Buttons Grid */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .action-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .action-icon {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .action-item p {
+            font-size: 13px;
+            color: var(--text-main);
+            font-weight: bold;
+        }
+
+        /* Game Cards */
+        .game-banner {
+            background: linear-gradient(90deg, #1e1b4b, #311026);
+            border: 2px solid var(--accent-gold);
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .game-title-img {
+            font-size: 38px;
+            font-weight: 900;
+            font-style: italic;
+            background: linear-gradient(180deg, #fef08a, #ca8a04);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .play-btn {
+            background: linear-gradient(135deg, #b91c1c, #991b1b);
+            border: 1px solid #f87171;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        /* Sub-Pages Header */
+        .sub-header {
+            background: #131b2e;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-main);
+            background: none;
+            border: none;
+        }
+
+        .sub-header h3 {
+            font-size: 18px;
+            flex-grow: 1;
+            text-align: center;
+            margin-right: 25px;
+        }
+
+        .sub-top-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .sub-top-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .sub-top-card .icon {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .sub-top-card p {
+            font-size: 13px;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .sub-top-card span {
+            font-size: 12px;
+            color: var(--accent-gold);
+            display: block;
+            margin-top: 4px;
+        }
+
+        .sub-promo-banner {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            border: 1px solid #38bdf8;
+            border-radius: 14px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sub-promo-banner h4 {
+            color: #fef08a;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .sub-promo-banner p {
+            font-size: 13px;
+            color: #f8fafc;
+        }
+
+        .bottom-action-container {
+            margin-top: 30px;
+        }
+
+        .big-play-btn {
+            background: linear-gradient(180deg, #38bdf8, #0284c7);
+            color: white;
+            border: 2px solid #bae6fd;
+            border-radius: 14px;
+            padding: 14px 60px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        #register-modal {
+            z-index: 6000;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 450px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .modal-header h3 {
+            color: var(--accent-gold);
+            font-size: 18px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .settings-menu-item {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .settings-menu-item:hover {
+            border-color: var(--accent-gold);
+        }
+        .settings-menu-item h4 {
+            color: white;
+            font-size: 15px;
+        }
+
+        .pay-method-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .pay-method-card:hover {
+            border-color: var(--accent-gold);
+        }
+        .pay-info h4 {
+            color: white;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        .pay-info p {
+            color: var(--text-sub);
+            font-size: 13px;
+        }
+
+        .amounts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .amt-chip {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .amt-chip.selected {
+            background: #d97706;
+            border-color: var(--accent-gold);
+            color: #fef08a;
+        }
+
+        .custom-input {
+            width: 100%;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        .copy-box {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .copy-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-action-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* Time Selection Box Styles */
+        .time-select-box {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .time-select-box.closed-slot {
+            background: #2a1b1b;
+            border-color: #7f1d1d;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .time-left span:first-child {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-main);
+            display: block;
+        }
+
+        .time-left span:last-child {
+            font-size: 12px;
+            color: var(--text-sub);
+            display: block;
+        }
+
+        .time-right {
+            text-align: right;
+        }
+
+        .time-right span:first-child {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--accent-gold);
+            display: block;
+        }
+
+        .time-right span:last-child {
+            font-size: 12px;
+            color: #f87171;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* Keypad Betting Interface */
+        .play-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            z-index: 2000;
+            flex-direction: column;
+        }
+
+        .play-screen.active {
+            display: flex;
+        }
+
+        .play-top-bar {
+            background: #131b2e;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .play-top-bar h3 {
+            font-size: 14px;
+            flex-grow: 1;
+            text-align: center;
+            margin-right: 25px;
+        }
+
+        .total-amount-bar {
+            background: #1e293b;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-sub);
+        }
+
+        .total-amount-bar span {
+            color: var(--text-main);
+            font-weight: bold;
+        }
+
+        .input-labels-row {
+            display: flex;
+            background: #131b2e;
+            padding: 10px 15px;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-sub);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .input-labels-row div {
+            flex: 1;
+        }
+
+        .inputs-display-row {
+            display: flex;
+            padding: 10px 15px;
+            gap: 10px;
+            background: #0b0f19;
+        }
+
+        .inputs-display-row input {
+            flex: 1;
+            background: #1e293b;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-main);
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .inputs-display-row input.active-input {
+            border-color: #3b82f6;
+            background: #1e293b;
+        }
+
+        .action-btns-row {
+            display: flex;
+            padding: 0 15px 15px 15px;
+            gap: 10px;
+        }
+
+        .action-btns-row button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn-red { background: #ef4444; }
+        .btn-blue { background: #3b82f6; }
+
+        /* Large Preview Area */
+        .preview-box-container {
+            padding: 0 15px 15px 15px;
+            background: #0b0f19;
+        }
+
+        .preview-box {
+            background: #131b2e;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 15px;
+            min-height: 85px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+        }
+
+        .preview-numbers {
+            font-size: 15px;
+            color: var(--accent-gold);
+            font-weight: bold;
+            word-break: break-all;
+            line-height: 1.4;
+        }
+
+        .keypad-container {
+            margin-top: auto;
+            background: #0b0f19;
+            padding: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .keypad-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .keypad-btn {
+            background: #1e293b;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px 0;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .keypad-btn:active {
+            background: #334155;
+        }
+
+        .keypad-btn.orange { background: #f59e0b; color: #0b0f19; }
+        .keypad-btn.red { background: #ef4444; }
+        .keypad-btn.green { background: #10b981; }
+        .keypad-btn.blue-large { background: #3b82f6; flex: 1; }
+
+        #confirm-bet-modal {
+            z-index: 3000;
+        }
+        #confirm-bet-modal .modal-content {
+            text-align: center;
+            padding: 25px;
+        }
+
+        .confirm-btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .confirm-btn-row button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-confirm {
+            background: #10b981;
+            color: white;
+        }
+
+        .grid-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            z-index: 2000;
+            flex-direction: column;
+        }
+
+        .grid-screen.active {
+            display: flex;
+        }
+
+        .grid-top-bar {
+            background: #131b2e;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .grid-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            align-content: start;
+        }
+
+        /* Num Box for Grid System */
+        .num-box {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 10px 2px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+            transition: 0.15s;
+        }
+
+        .num-box-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffffff;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .num-box-indicator {
+            height: 4px;
+            background: #10b981;
+            border-radius: 2px;
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .num-box.selected {
+            border-color: #fbbf24;
+            background: #78350f;
+        }
+
+        .num-box.selected .num-box-text {
+            color: #fef08a;
+        }
+
+        .num-box.selected .num-box-indicator {
+            background: #fbbf24;
+        }
+
+        .num-box.sold-out {
+            background: #7f1d1d !important;
+            border-color: #ef4444 !important;
+            cursor: not-allowed !important;
+            opacity: 0.85;
+        }
+        .num-box.sold-out .num-box-text {
+            color: #fca5a5 !important;
+            text-decoration: line-through;
+        }
+        .num-box.sold-out .num-box-indicator {
+            background: #ef4444 !important;
+        }
+
+        .grid-footer {
+            background: #131b2e;
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .grid-footer input {
+            flex: 1;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text-main);
+            font-size: 15px;
+        }
+
+        .grid-footer button {
+            flex: 1.5;
+            background: #d97706;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            padding: 12px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 10px 5px;
+            text-align: center;
+            font-size: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            color: var(--text-sub);
+            background: var(--bg-color);
+        }
+
+        td {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="auth-screen">
+        <div class="login-card">
+            <h2>MK 2D/3D Login</h2>
+            <p>အကောင့်ဝင်ရန် သင့်အချက်အလက်များကို ဖြည့်ပါ</p>
+            <div class="login-input-group">
+                <label>ဖုန်းနံပါတ် (သို့) အမည်</label>
+                <input type="text" id="login-user" class="login-input" placeholder="">
+            </div>
+            <div class="login-input-group">
+                <label>စကားဝှက် (Password)</label>
+                <input type="password" id="login-pass" class="login-input" placeholder="စကားဝှက်ထည့်ပါ">
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('login-pass', this)">👁️</button>
+            </div>
+            <button class="login-btn" onclick="handleLogin()">အကောင့်ဝင်မည်</button>
+            <div class="register-link-text">
+                အကောင့်မရှိသေးဘူးလား? <span onclick="openRegisterModal()">အကောင့်အသစ်ဖွင့်မည်</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- REGISTER MODAL -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>အကောင့်အသစ်ဖွင့်ရန်</h3>
+                <button class="close-btn" onclick="closeModal('register-modal')">&times;</button>
+            </div>
+            <div class="login-input-group">
+                <label>ဖုန်းနံပါတ် (သို့) အမည်</label>
+                <input type="text" id="reg-user" class="login-input" placeholder="09xxxxxxxxx သို့မဟုတ် အမည်">
+            </div>
+            <div class="login-input-group">
+                <label>စကားဝှက် (Password)</label>
+                <input type="password" id="reg-pass" class="login-input" placeholder="စကားဝှက်အသစ်ထည့်ပါ">
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('reg-pass', this)">👁️</button>
+            </div>
+            <div class="login-input-group">
+                <label>အတည်ပြုစကားဝှက် (Confirm Password)</label>
+                <input type="password" id="reg-cpass" class="login-input" placeholder="စကားဝှက်ကို ထပ်မံထည့်ပါ">
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('reg-cpass', this)">👁️</button>
+            </div>
+            <button class="submit-action-btn" onclick="submitRegister()">အကောင့်အသစ်ဖွင့်မည်</button>
+        </div>
+    </div>
+
+    <!-- ADMIN LOGIN MODAL -->
+    <div id="admin-login-modal" class="modal">
+        <div class="modal-content" style="max-width: 350px;">
+            <div class="modal-header">
+                <h3>🛡️ ဒိုင် (Admin) အတည်ပြုရန်</h3>
+                <button class="close-btn" onclick="closeModal('admin-login-modal')">&times;</button>
+            </div>
+            <div class="login-input-group">
+                <label>ဒိုင် စကားဝှက် (Password)</label>
+                <input type="password" id="admin-pass-input" class="login-input" placeholder="Admin Password ထည့်ပါ">
+            </div>
+            <button class="submit-action-btn" style="background: #d97706;" onclick="verifyAdminLogin()">ဝင်ရောက်မည်</button>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL MODAL -->
+    <div id="admin-panel-modal" class="modal">
+        <div class="modal-content" style="max-width: 550px;">
+            <div class="modal-header">
+                <h3 style="color: var(--accent-gold);">🛡️ MK 2D/3D ဒိုင် ထိန်းချုပ်ရေး စာမျက်နှာ</h3>
+                <button class="close-btn" onclick="closeModal('admin-panel-modal')">&times;</button>
+            </div>
+
+            <!-- Admin Menu Tabs -->
+            <div style="display: flex; gap: 6px; margin-bottom: 15px;">
+                <button id="admin-tab-dep" class="copy-btn" style="background: #d97706; flex: 1; padding: 8px; font-size: 12px;" onclick="switchAdminTab('dep')">📥 ငွေသွင်း</button>
+                <button id="admin-tab-wd" class="copy-btn" style="background: #1e293b; border: 1px solid #334155; flex: 1; padding: 8px; font-size: 12px;" onclick="switchAdminTab('wd')">📤 ငွေထုတ်</button>
+                <button id="admin-tab-res" class="copy-btn" style="background: #1e293b; border: 1px solid #334155; flex: 1; padding: 8px; font-size: 12px;" onclick="switchAdminTab('res')">➕ ပေါက်စဉ်ထည့်ရန်</button>
+            </div>
+
+            <!-- Admin Deposit List -->
+            <div id="admin-dep-section">
+                <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">အသုံးပြုသူများ တင်ထားသော ငွေသွင်းတောင်းဆိုမှုများ:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>အချိန်</th>
+                            <th>အကောင့်</th>
+                            <th>စနစ် / Txn ID</th>
+                            <th>ပမာဏ / အခြေအနေ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-deposit-table-body">
+                        <tr><td colspan="4" style="color: var(--text-sub);">ငွေသွင်းတောင်းဆိုမှု မရှိသေးပါ</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Admin Withdraw List -->
+            <div id="admin-wd-section" style="display: none;">
+                <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">အသုံးပြုသူများ တင်ထားသော ငွေထုတ်တောင်းဆိုမှုများ:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>အချိန်</th>
+                            <th>အကောင့် / ဖုန်း</th>
+                            <th>ပမာဏ</th>
+                            <th>အခြေအနေ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-withdraw-table-body">
+                        <tr><td colspan="4" style="color: var(--text-sub);">ငွေထုတ်တောင်းဆိုမှု မရှိသေးပါ</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Admin Add Result Section -->
+            <div id="admin-res-section" style="display: none;">
+                <p style="font-size: 13px; color: var(--accent-gold); margin-bottom: 12px;">🎯 ပေါက်စဉ်အသစ် ထည့်သွင်းခြင်း:</p>
+                
+                <div class="login-input-group">
+                    <label>ဂိမ်းအမျိုးအစား</label>
+                    <select id="add-res-type" class="custom-input" style="cursor: pointer;" onchange="toggleResultFields()">
+                        <option value="2D">2D (နှစ်လုံးထိုး - မနက် (၈၅ဆ) / ညနေ (၉၅ဆ))</option>
+                        <option value="3D">3D (သုံးလုံးထိုး - (၇၀၀ဆ))</option>
+                    </select>
+                </div>
+
+                <div class="login-input-group">
+                    <label>ရက်စွဲ</label>
+                    <input type="text" id="add-res-date" class="custom-input" placeholder="ရက်စွဲထည့်ပါ" value="05/Nov/2026">
+                </div>
+
+                <div id="group-2d-slot" class="login-input-group">
+                    <label>အချိန်ပိုင်း</label>
+                    <select id="add-res-slot" class="custom-input" style="cursor: pointer;">
+                        <option value="မနက်ပိုင်း (12:01)">မနက်ပိုင်း (12:01) [၈၅ ဆ]</option>
+                        <option value="ညနေပိုင်း (04:30)">ညနေပိုင်း (04:30) [၉၅ ဆ]</option>
+                    </select>
+                </div>
+
+                <div class="login-input-group">
+                    <label>ထွက်ဂဏန်း</label>
+                    <input type="text" id="add-res-number" class="custom-input" placeholder="ဥပမာ - 97 (သို့) 224" maxlength="3">
+                </div>
+
+                <button class="submit-action-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);" onclick="submitNewResultAndAutoPay()">ပေါက်စဉ်အတည်ပြုပြီး ဆုငွေများ Auto ပေးမည်</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. HOME / DASHBOARD VIEW -->
+    <div id="home-view" class="view-section">
+        <div class="header-profile">
+            <button class="copy-btn" style="background: #d97706; padding: 8px 12px; font-size: 13px;" onclick="openModal('admin-login-modal')">🛡️ ဒိုင် (Admin) စာမျက်နှာ</button>
+            <div class="settings-icon" onclick="openModal('settings-modal')">⚙️</div>
+        </div>
+
+        <div class="container">
+            <div class="balance-card">
+                <div>
+                    <p>လက်ကျန်ငွေ</p>
+                    <button class="eye-toggle-btn" id="eye-btn" onclick="toggleBalanceVisibility()">👁️</button>
+                </div>
+                <span id="user-balance-display">0 ကျပ်</span>
+            </div>
+
+            <div class="promo-banner">
+                <div class="rates-grid">
+                    <p>မနက်ပိုင်း 2D <strong>(၈၅) ဆ</strong></p>
+                    <p>ညနေပိုင်း 2D <strong>(၉၅) ဆ</strong></p>
+                    <p>3D <strong>(၇၀၀) ဆ</strong></p>
+                </div>
+            </div>
+
+            <div class="notice-bar">
+                📢 MK 2D/3D - LocalStorage Admin System
+            </div>
+
+            <div class="action-grid">
+                <div class="action-item" onclick="openDepositMethodModal()">
+                    <div class="action-icon">💳</div>
+                    <p>ငွေသွင်း</p>
+                </div>
+                <div class="action-item" onclick="openWithdrawModal()">
+                    <div class="action-icon">💸</div>
+                    <p>ငွေထုတ်</p>
+                </div>
+                <div class="action-item" onclick="switchView('results-view')" style="border-color: var(--accent-gold); background: #1e293b;">
+                    <div class="action-icon">🏆</div>
+                    <p style="color: var(--accent-gold);">ပေါက်စဉ်</p>
+                </div>
+            </div>
+
+            <div class="game-banner" onclick="switchView('2d-view')">
+                <div class="game-title-img">2D-VIEW</div>
+                <button class="play-btn">ထိုးမည်</button>
+            </div>
+            
+            <div class="game-banner" onclick="switchView('3d-view')">
+                <div class="game-title-img">3D</div>
+                <button class="play-btn">ထိုးမည်</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 2D SUB-PAGE VIEW -->
+    <div id="2d-view" class="view-section">
+        <div class="sub-header">
+            <button class="back-btn" onclick="switchView('home-view')">❮</button>
+            <h3>2D စာမျက်နှာ</h3>
+        </div>
+
+        <div class="container">
+            <div class="sub-top-grid">
+                <div class="sub-top-card" onclick="openHistoryModal('2D')">
+                    <div class="icon">📊</div>
+                    <p>2D စာရင်း</p>
+                    <span id="sub-total-2d">0 ကျပ်</span>
+                </div>
+                <div class="sub-top-card" onclick="switchView('results-view')">
+                    <div class="icon">🏆</div>
+                    <p>2D ပေါက်စဉ်</p>
+                    <span style="color: #60a5fa;">ကြည့်ရန်</span>
+                </div>
+            </div>
+
+            <div class="sub-promo-banner">
+                <h4>2D (အချိန်ပိုင်း အလိုက် ဒိုင်ခွဲ)</h4>
+                <p>မနက်ပိုင်း 2D (၈၅ ဆ) | ညနေပိုင်း 2D (၉၅ ဆ)</p>
+            </div>
+
+            <div class="bottom-action-container">
+                <button class="big-play-btn" onclick="openModal('2d-time-select-modal')">ထိုးမည်</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 3D SUB-PAGE VIEW -->
+    <div id="3d-view" class="view-section">
+        <div class="sub-header">
+            <button class="back-btn" onclick="switchView('home-view')">❮</button>
+            <h3>3D စာမျက်နှာ</h3>
+        </div>
+
+        <div class="container">
+            <div class="sub-top-grid">
+                <div class="sub-top-card" onclick="openHistoryModal('3D')">
+                    <div class="icon">📊</div>
+                    <p>3D စာရင်း</p>
+                    <span id="sub-total-3d">0 ကျပ်</span>
+                </div>
+                <div class="sub-top-card" onclick="switchView('results-view')">
+                    <div class="icon">🏆</div>
+                    <p>3D ပေါက်စဉ်</p>
+                    <span style="color: #60a5fa;">ကြည့်ရန်</span>
+                </div>
+            </div>
+
+            <div class="sub-promo-banner" style="background: linear-gradient(135deg, #b45309, #78350f); border-color: #f59e0b;">
+                <h4>3D (လစဉ်ထွက်ဂဏန်း - ၁ရက်နှင့် ၁၆ရက်)</h4>
+                <p>3D ပေါက်ကြေး (၇၀၀ ဆ)</p>
+            </div>
+
+            <div class="bottom-action-container">
+                <button class="big-play-btn" style="background: linear-gradient(180deg, #f59e0b, #d97706); border-color: #fef08a;" onclick="openModal('3d-time-select-modal')">ထိုးမည်</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. RESULTS (ပေါက်စဉ်) VIEW -->
+    <div id="results-view" class="view-section">
+        <div class="sub-header">
+            <button class="back-btn" onclick="switchView('home-view')">❮</button>
+            <h3>MK 2D & 3D ပေါက်စဉ်များ</h3>
+        </div>
+
+        <div class="container">
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button id="res-btn-2d" class="submit-action-btn" style="background: #d97706;" onclick="switchResultsTab('2D')">2D ပေါက်စဉ်များ</button>
+                <button id="res-btn-3d" class="submit-action-btn" style="background: #1e293b; border: 1px solid #334155;" onclick="switchResultsTab('3D')">3D ပေါက်စဉ်များ</button>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <button class="copy-btn" style="background: #3b82f6; width: 100%; padding: 12px; font-size: 14px;" onclick="openWinningCheckModal()">🎯 ကိုယ်ထိုးထားတာ ပေါက်မပေါက် စစ်ရန်</button>
+            </div>
+
+            <!-- 2D Results Table -->
+            <div id="results-content-2d">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ရက်စွဲ</th>
+                            <th>အချိန်ပိုင်း</th>
+                            <th>ထွက်ဂဏန်း</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-table-2d"></tbody>
+                </table>
+            </div>
+
+            <!-- 3D Results Table -->
+            <div id="results-content-3d" style="display: none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ထွက်သည့်ရက်စွဲ</th>
+                            <th>3D ထွက်ဂဏန်း</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-table-3d"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- WINNING CHECK MODAL -->
+    <div id="winning-check-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>ပေါက်ငွေ စစ်ဆေးခြင်း</h3>
+                <button class="close-btn" onclick="closeModal('winning-check-modal')">&times;</button>
+            </div>
+            
+            <div class="login-input-group">
+                <label>ဂိမ်းအမျိုးအစား ရွေးပါ</label>
+                <select id="win-check-type" class="custom-input" style="cursor: pointer;">
+                    <option value="2D">2D (နှစ်လုံးထိုး - မနက်/ညနေ)</option>
+                    <option value="3D">3D (သုံးလုံးထိုး)</option>
+                </select>
+            </div>
+
+            <div class="login-input-group">
+                <label>ထွက်လာသည့် ပေါက်ဂဏန်း ရိုက်ထည့်ပါ</label>
+                <input type="text" id="win-check-num" class="custom-input" placeholder="ဥပမာ - 97 သို့မဟုတ် 224" maxlength="3">
+            </div>
+
+            <button class="submit-action-btn" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);" onclick="calculateUserWinnings()">စစ်ဆေးမည်</button>
+
+            <!-- Result Box -->
+            <div id="win-result-container" style="margin-top: 20px; display: none; background: #1e293b; border: 1px solid var(--accent-gold); border-radius: 12px; padding: 15px; text-align: center;">
+                <h4 style="color: var(--accent-gold); font-size: 16px; margin-bottom: 8px;">🎉 ရလဒ် ထွက်ပေါ်ချက်</h4>
+                <p id="win-result-text" style="font-size: 14px; color: white; line-height: 1.5;"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MENU MODAL -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>ဆက်တင်များ (Settings)</h3>
+                <button class="close-btn" onclick="closeModal('settings-modal')">&times;</button>
+            </div>
+            <div class="settings-menu-item" onclick="triggerLogout()">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 20px;">🚪</span>
+                    <h4>အထွက်မည် (Log Out)</h4>
+                </div>
+                <span style="color: var(--text-sub);">➔</span>
+            </div>
+            <div class="settings-menu-item" onclick="openModal('contact-modal')">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 20px;">📞</span>
+                    <h4>ဆက်သွယ်ရန် (Contact Us)</h4>
+                </div>
+                <span style="color: var(--text-sub);">➔</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTACT US MODAL -->
+    <div id="contact-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>ဆက်သွယ်ရန်</h3>
+                <button class="close-btn" onclick="closeModal('contact-modal')">&times;</button>
+            </div>
+            <div style="padding: 10px 0; text-align: center;">
+                <p style="color: var(--text-sub); font-size: 14px; margin-bottom: 12px;">အကူအညီလိုပါက အောက်ပါတို့မှတဆင့် ဆက်သွယ်နိုင်ပါသည် -</p>
+                <div style="font-size: 13px; color: var(--accent-gold); margin-bottom: 4px; text-align: left;">Viber (ဆက်သွယ်ရန် လင့်ခ်):</div>
+                <div class="copy-box" style="margin-bottom: 15px;">
+                    <a href="viber://chat?number=09794184705" style="font-size: 14px; font-weight: bold; color: #38bdf8; text-decoration: underline; word-break: break-all;">09794184705 (Viber ဖွင့်ရန် နှိပ်ပါ)</a>
+                    <button class="copy-btn" onclick="copyToClipboard('09794184705')">Copy ကူးရန်</button>
+                </div>
+                <div style="font-size: 13px; color: var(--accent-gold); margin-bottom: 4px; text-align: left;">Telegram လင့်ခ်:</div>
+                <div class="copy-box">
+                    <a href="http://t.me/me2d3d9" target="_blank" style="font-size: 14px; font-weight: bold; color: #38bdf8; text-decoration: underline; word-break: break-all;">http://t.me/me2d3d9</a>
+                    <button class="copy-btn" onclick="copyToClipboard('http://t.me/me2d3d9')">Copy ကူးရန်</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEPOSIT METHOD SELECTION MODAL -->
+    <div id="deposit-method-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>ငွေသွင်းရန် / မှတ်တမ်း</h3>
+                <button class="close-btn" onclick="closeModal('deposit-method-modal')">&times;</button>
+            </div>
+            <div class="pay-method-card" onclick="openDepositDetails('KPay')">
+                <div class="pay-info">
+                    <h4>KBZ Pay (ငွေသွင်းရန်)</h4>
+                    <p>အမည်: MgKane | ဖုန်း: 09794184705</p>
+                </div>
+                <span style="font-size: 20px; color: var(--accent-gold);">➔</span>
+            </div>
+            <div class="pay-method-card" onclick="openDepositDetails('WavePay')">
+                <div class="pay-info">
+                    <h4>Wave Pay (ငွေသွင်းရန်)</h4>
+                    <p>အမည်: Kain | ဖုန်း: 09794184705</p>
+                </div>
+                <span style="font-size: 20px; color: var(--accent-gold);">➔</span>
+            </div>
+            <div class="pay-method-card" onclick="openDepositHistoryModal()" style="background: #1e293b; border-color: #3b82f6;">
+                <div class="pay-info">
+                    <h4 style="color: #60a5fa;">📥 ငွေသွင်းမှတ်တမ်းကြည့်ရန်</h4>
+                    <p>ပြုလုပ်ခဲ့သော ငွေသွင်းစာရင်းများ</p>
+                </div>
+                <span style="font-size: 20px; color: #60a5fa;">➔</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEPOSIT DETAILS & TRANSACTION ID MODAL -->
+    <div id="deposit-details-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="deposit-title">ငွေသွင်းရန်</h3>
+                <button class="close-btn" onclick="closeModal('deposit-details-modal')">&times;</button>
+            </div>
+            
+            <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">ငွေလွှဲရမည့် အကောင့်အချက်အလက်:</div>
+            <div class="copy-box">
+                <div>
+                    <span id="dep-acc-name" style="font-weight: bold; display: block; color: white;">အမည်: MgKane</span>
+                    <span id="dep-acc-phone" style="color: var(--accent-gold); display: block;">09794184705</span>
+                </div>
+                <button class="copy-btn" onclick="copyToClipboard('09794184705')">နံပါတ် Copy ကူးရန်</button>
+            </div>
+
+            <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">ငွေသွင်းမည့် ပမာဏ ရွေးပါ သို့မဟုတ် ရိုက်ထည့်ပါ:</div>
+            <div class="amounts-grid">
+                <div class="amt-chip" onclick="selectAmount(3000)">3,000</div>
+                <div class="amt-chip" onclick="selectAmount(5000)">5,000</div>
+                <div class="amt-chip" onclick="selectAmount(10000)">10,000</div>
+                <div class="amt-chip" onclick="selectAmount(30000)">30,000</div>
+                <div class="amt-chip" onclick="selectAmount(50000)">50,000</div>
+                <div class="amt-chip" onclick="selectAmount(100000)">100,000</div>
+                <div class="amt-chip" onclick="selectAmount(500000)">500,000</div>
+                <div class="amt-chip" onclick="selectAmount(1000000)">1,000,000</div>
+            </div>
+
+            <input type="number" id="deposit-amount-input" class="custom-input" placeholder="အနည်းဆုံး ၃ထောင်ကျပ်ကစတင်ကစားလို့ရပါသည်">
+
+            <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">လုပ်ငန်းစဉ်နံပါတ် (Transaction ID ၆ လုံးတိတိ):</div>
+            <input type="text" id="deposit-txn-input" class="custom-input" maxlength="6" placeholder="လုပ်ငန်းစဉ်နံပါတ် ၆ လုံး ရိုက်ပါ">
+
+            <button class="submit-action-btn" onclick="submitDeposit()">ငွေသွင်းတောင်းဆိုမည်</button>
+        </div>
+    </div>
+
+    <!-- DEPOSIT HISTORY MODAL -->
+    <div id="deposit-history-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>ငွေသွင်းမှတ်တမ်း</h3>
+                <button class="close-btn" onclick="closeModal('deposit-history-modal')">&times;</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ရက်စွဲ/အချိန်</th>
+                        <th>ငွေပေးချေမှု</th>
+                        <th>Txn ID</th>
+                        <th>ပမာဏ / အခြေအနေ</th>
+                    </tr>
+                </thead>
+                <tbody id="deposit-history-body">
+                    <tr><td colspan="4" style="color: var(--text-sub);">ငွေသွင်းမှတ်တမ်း မရှိသေးပါ</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- WITHDRAW MODAL -->
+    <div id="withdraw-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>ငွေထုတ်ယူရန် / မှတ်တမ်း</h3>
+                <button class="close-btn" onclick="closeModal('withdraw-modal')">&times;</button>
+            </div>
+            
+            <div style="background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 12px; text-align: center; margin-bottom: 15px;">
+                <span style="font-size: 13px; color: var(--text-sub); display: block;">သင့်ရဲ့ လက်ကျန်ငွေပမာဏ</span>
+                <span id="withdraw-balance-text" style="font-size: 18px; font-weight: bold; color: var(--accent-gold);">0 ကျပ်</span>
+            </div>
+
+            <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">ငွေထုတ်မည့် ငွေပေးချေမှုစနစ်:</div>
+            <select id="withdraw-method" class="custom-input" style="cursor: pointer;">
+                <option value="KPay">KBZ Pay (KPay)</option>
+                <option value="WavePay">Wave Pay</option>
+            </select>
+
+            <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">လက်ခံမည့် ဖုန်းနံပါတ်:</div>
+            <input type="text" id="withdraw-phone" class="custom-input" placeholder="ဥပမာ- 09xxxxxxxxx">
+
+            <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">ထုတ်ယူမည့် ငွေပမာဏ (ကျပ်):</div>
+            <input type="number" id="withdraw-amount" class="custom-input" placeholder="ပမာဏ ရိုက်ထည့်ပါ">
+
+            <button class="submit-action-btn" style="background: linear-gradient(135deg, #d97706, #b45309); margin-bottom: 12px;" onclick="submitWithdraw()">ငွေထုတ်ရန် တောင်းဆိုမည်</button>
+            
+            <button class="submit-action-btn" style="background: #3b82f6;" onclick="openWithdrawHistoryModal()">📤 ငွေထုတ်မှတ်တမ်းကြည့်ရန်</button>
+        </div>
+    </div>
+
+    <!-- WITHDRAW HISTORY MODAL -->
+    <div id="withdraw-history-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>ငွေထုတ်မှတ်တမ်း</h3>
+                <button class="close-btn" onclick="closeModal('withdraw-history-modal')">&times;</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ရက်စွဲနှင့်အချိန်</th>
+                        <th>ဖုန်းနံပါတ်</th>
+                        <th>ပမာဏ</th>
+                        <th>အခြေအနေ</th>
+                    </tr>
+                </thead>
+                <tbody id="withdraw-history-body">
+                    <tr><td colspan="4" style="color: var(--text-sub);">ငွေထုတ်မှတ်တမ်း မရှိသေးပါ</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="history-modal-title">စာရင်း</h3>
+                <button class="close-btn" onclick="closeModal('history-modal')">&times;</button>
+            </div>
+            <div id="history-total-banner" style="background: #1e293b; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 15px; color: var(--accent-gold); font-size: 14px; font-weight: bold;">
+                စုစုပေါင်းထိုးငွေ: 0 ကျပ်
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ရက်စွဲနှင့်အချိန်</th>
+                        <th>ဂဏန်း</th>
+                        <th>ပမာဏ</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table-body">
+                    <tr><td colspan="3" style="color: var(--text-sub);">ထိုးထားခြင်း မရှိသေးပါ</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 2D Time Selection Modal -->
+    <div id="2d-time-select-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>2D အချိန်ရွေးချယ်ပါ</h3>
+                <button class="close-btn" onclick="closeModal('2d-time-select-modal')">&times;</button>
+            </div>
+            
+            <div id="slot-morning-2d" class="time-select-box" onclick="select2DTimeSlot('မနက် (12:01) (ဖွင့်ချိန် 09:00 AM)', 9, 0, 11, 50)">
+                <div class="time-left">
+                    <span>မနက် (12:01) [၈၅ ဆ]</span>
+                    <span>(ဖွင့်ချိန် 09:00 AM / ပိတ်ချိန် 11:50 AM)</span>
+                </div>
+                <div class="time-right">
+                    <span id="morning-2d-status">စောင့်ဆိုင်းဆဲ</span>
+                    <span id="morning-2d-countdown">--</span>
+                </div>
+            </div>
+
+            <div id="slot-evening-2d" class="time-select-box" onclick="select2DTimeSlot('ညနေ (04:30) (ဖွင့်ချိန် 01:00 PM)', 13, 0, 15, 55)">
+                <div class="time-left">
+                    <span>ညနေ (04:30) [၉၅ ဆ]</span>
+                    <span>(ဖွင့်ချိန် 01:00 PM / ပိတ်ချိန် 03:55 PM)</span>
+                </div>
+                <div class="time-right">
+                    <span id="evening-2d-status">စောင့်ဆိုင်းဆဲ</span>
+                    <span id="evening-2d-countdown">--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3D Time Selection Modal -->
+    <div id="3d-time-select-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>3D အချိန်ရွေးချယ်ပါ (၁ ရက် / ၁၆ ရက်)</h3>
+                <button class="close-btn" onclick="closeModal('3d-time-select-modal')">&times;</button>
+            </div>
+            
+            <div id="slot-3d-main" class="time-select-box" onclick="select3DTimeSlot('3D (လစဉ်ထွက်ဂဏန်း)', 6, 0, 14, 0)">
+                <div class="time-left">
+                    <span>3D (လစဉ်ထွက်ဂဏန်း) [၇၀၀ ဆ]</span>
+                    <span>(ဖွင့်ချိန် 06:00 AM / ပိတ်ချိန် 02:00 PM)</span>
+                </div>
+                <div class="time-right">
+                    <span id="status-3d">စောင့်ဆိုင်းဆဲ</span>
+                    <span id="countdown-3d">--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KEYPAD SCREEN -->
+    <div id="play-screen" class="play-screen">
+        
+        <div id="confirm-bet-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header" style="justify-content: center; border-bottom: none; margin-bottom: 5px;">
+                    <h3>ဂဏန်းထိုးရန် အတည်ပြုခြင်း</h3>
+                </div>
+                <p id="confirm-bet-details" style="color: var(--accent-gold); font-size: 15px; margin-bottom: 15px;"></p>
+                <div class="confirm-btn-row">
+                    <button class="btn-cancel" onclick="closeConfirmModal()">ပယ်ဖျက်မည်</button>
+                    <button class="btn-confirm" onclick="executeConfirmedBet()">သေချာပြီ</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="play-top-bar">
+            <button class="back-btn" onclick="closeKeypadScreen()">❮</button>
+            <h3 id="keypad-title">ဂဏန်းထိုးမည်</h3>
+        </div>
+        <div class="total-amount-bar">
+            စုစုပေါင်း ထိုးငွေ: <span id="display-total">0</span>ကျပ်
+        </div>
+        <div class="input-labels-row">
+            <div>ဂဏန်း</div>
+            <div style="text-align: right;">ငွေပမာဏ</div>
+        </div>
+        <div class="inputs-display-row">
+            <input type="text" id="input-num" class="active-input" placeholder="ဂဏန်း" readonly onclick="setActiveField('num')">
+            <input type="text" id="input-amt" placeholder="ပမာဏ" readonly onclick="setActiveField('amt')">
+            <button style="background: #ef4444; border: none; border-radius: 8px; color: white; font-weight: bold; width: 50px;" onclick="clearKeypadInputs()">⌫</button>
+        </div>
+        
+        <div class="action-btns-row">
+            <button class="btn-red" id="btn-left-action" onclick="handleLeftAction()">ခွေ/ပူး</button>
+            <button class="btn-blue" onclick="openGridFromKeypad()">ရွေးကွက်</button>
+        </div>
+
+        <div class="preview-box-container">
+            <div class="preview-box">
+                <div class="preview-header">
+                    <span>ရွေးချယ်ထားသော ဂဏန်းများ Preview</span>
+                    <span id="preview-count" style="color: var(--accent-gold);">0 ကွက်</span>
+                </div>
+                <div id="preview-numbers" class="preview-numbers">-</div>
+            </div>
+        </div>
+
+        <div class="keypad-container">
+            <div class="keypad-row">
+                <div class="keypad-btn orange" onclick="pressKey('R')">R</div>
+                <div class="keypad-btn orange" onclick="pressKey('*')">*</div>
+                <div class="keypad-btn red" onclick="backspaceKeypad()">⌫</div>
+            </div>
+            <div class="keypad-row">
+                <div class="keypad-btn" onclick="pressKey('1')">1</div>
+                <div class="keypad-btn" onclick="pressKey('2')">2</div>
+                <div class="keypad-btn" onclick="pressKey('3')">3</div>
+                <div class="keypad-btn green" onclick="switchFieldToAmt()">/</div>
+            </div>
+            <div class="keypad-row" style="display: flex; gap: 8px;">
+                <div style="display: flex; gap: 8px; flex: 3;">
+                    <div class="keypad-btn" onclick="pressKey('4')">4</div>
+                    <div class="keypad-btn" onclick="pressKey('5')">5</div>
+                    <div class="keypad-btn" onclick="pressKey('6')">6</div>
+                </div>
+                <div class="keypad-btn blue-large" style="display: flex; align-items: center; justify-content: center; flex: 1;" onclick="pressKey('ENTER')">ENTER</div>
+            </div>
+            <div class="keypad-row">
+                <div class="keypad-btn" onclick="pressKey('7')">7</div>
+                <div class="keypad-btn" onclick="pressKey('8')">8</div>
+                <div class="keypad-btn" onclick="pressKey('9')">9</div>
+            </div>
+            <div class="keypad-row">
+                <div class="keypad-btn" onclick="pressKey('0')">0</div>
+                <div class="keypad-btn orange" style="flex: 3;" onclick="submitKeypadBet()">ထိုးမည်</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRID SCREEN -->
+    <div id="grid-screen" class="grid-screen">
+        <div class="grid-top-bar">
+            <button class="back-btn" onclick="closeGridScreen()">❮</button>
+            <h3 id="grid-title">ရွေးကွက်များ</h3>
+            <div class="grid-icons" onclick="clearSelectedGrid()">
+                <span>🗑️</span>
+            </div>
+        </div>
+        <div class="grid-body" id="number-grid-container"></div>
+        <div class="grid-footer">
+            <input type="number" id="grid-amount-input" placeholder="ငွေပမာဏ">
+            <button onclick="submitGridBets()">အတည်ပြုမည်</button>
+        </div>
+    </div>
+
+    <script>
+        let registeredUsers = JSON.parse(localStorage.getItem('mk_registered_users')) || [
+            { user: "09698118418", pass: "123456" }
+        ];
+
+        let userBalance = parseFloat(localStorage.getItem('mk_user_balance')) || 0;
+        let isBalanceVisible = true;
+        
+        let userBets = JSON.parse(localStorage.getItem('mk_user_bets')) || [];
+        let depositRecords = JSON.parse(localStorage.getItem('mk_deposit_records')) || [];
+        let withdrawRecords = JSON.parse(localStorage.getItem('mk_withdraw_records')) || [];
+
+        let activeTimeSlot = '';
+        let currentActiveField = 'num'; 
+        let currentNumVal = '';
+        let currentAmtVal = '';
+        let selectedGridNumbers = new Set();
+        let is3DMode = false;
+
+        let pendingNumsToProcess = [];
+        let pendingAmtVal = 0;
+
+        let results2D = JSON.parse(localStorage.getItem('mk_results_2d')) || [
+            { date: "05/Nov/2026", slot: "မနက်ပိုင်း (12:01)", number: "97" },
+            { date: "04/Nov/2026", slot: "ညနေပိုင်း (04:30)", number: "29" }
+        ];
+
+        let results3D = JSON.parse(localStorage.getItem('mk_results_3d')) || [
+            { date: "2026-11-01", number: "224" },
+            { date: "2026-10-16", number: "781" }
+        ];
+
+        renderResultsTables();
+        setInterval(updateCountdowns, 1000);
+
+        window.addEventListener('DOMContentLoaded', () => {
+            let isLoggedIn = localStorage.getItem('mk_logged_in');
+            let savedUser = localStorage.getItem('mk_user');
+            
+            if (isLoggedIn === 'true' && savedUser) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('login-user').value = savedUser;
+                switchView('home-view');
+                updateBalanceDisplay();
+            } else {
+                document.getElementById('login-screen').style.display = 'flex';
+            }
+        });
+
+        function togglePasswordVisibility(fieldId, btnEl) {
+            let inputField = document.getElementById(fieldId);
+            if (inputField.type === "password") {
+                inputField.type = "text";
+                btnEl.innerText = "🙈";
+            } else {
+                inputField.type = "password";
+                btnEl.innerText = "👁️";
+            }
+        }
+
+        function updateCountdowns() {
+            const now = new Date();
+            const currentSecs = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            const currentDate = now.getDate();
+
+            updateSlotStatus('slot-morning-2d', 'morning-2d-status', 'morning-2d-countdown', currentSecs, 32400, 42600);
+            updateSlotStatus('slot-evening-2d', 'evening-2d-status', 'evening-2d-countdown', currentSecs, 46800, 57300);
+
+            const box3d = document.getElementById('slot-3d-main');
+            const status3d = document.getElementById('status-3d');
+            const countdown3d = document.getElementById('countdown-3d');
+
+            if (currentDate === 1 || currentDate === 16) {
+                if (currentSecs < 21600) {
+                    let diff = 21600 - currentSecs;
+                    box3d.classList.add('closed-slot');
+                    status3d.innerText = 'မဖွင့်သေးပါ';
+                    countdown3d.innerText = 'ဖွင့်ရန်လို: ' + formatSeconds(diff);
+                } else if (currentSecs >= 21600 && currentSecs <= 50400) {
+                    let diff = 50400 - currentSecs;
+                    box3d.classList.remove('closed-slot');
+                    status3d.innerText = 'ဖွင့်နေသည်';
+                    countdown3d.innerText = 'ပိတ်ရန်လို: ' + formatSeconds(diff);
+                } else {
+                    box3d.classList.add('closed-slot');
+                    status3d.innerText = 'ပိတ်ပါပြီ';
+                    countdown3d.innerText = 'အချိန်ကုန်သွားပါပြီ';
+                }
+            } else {
+                box3d.classList.add('closed-slot');
+                status3d.innerText = 'ဒီနေ့ 3D မရှိပါ';
+                countdown3d.innerText = '၁ ရက် (သို့) ၁၆ ရက်မှ ဖွင့်မည်';
+            }
+        }
+
+        function updateSlotStatus(boxId, statusId, countdownId, currentSecs, openSecs, closeSecs) {
+            const box = document.getElementById(boxId);
+            const statusEl = document.getElementById(statusId);
+            const countdownEl = document.getElementById(countdownId);
+
+            if (currentSecs < openSecs) {
+                let diff = openSecs - currentSecs;
+                box.classList.add('closed-slot');
+                statusEl.innerText = 'မဖွင့်သေးပါ';
+                countdownEl.innerText = 'ဖွင့်ရန်လို: ' + formatSeconds(diff);
+            } else if (currentSecs >= openSecs && currentSecs <= closeSecs) {
+                let diff = closeSecs - currentSecs;
+                box.classList.remove('closed-slot');
+                statusEl.innerText = 'ဖွင့်နေသည်';
+                countdownEl.innerText = 'ပိတ်ရန်လို: ' + formatSeconds(diff);
+            } else {
+                box.classList.add('closed-slot');
+                statusEl.innerText = 'ပိတ်ပါပြီ';
+                countdownEl.innerText = 'အချိန်ကုန်သွားပါပြီ';
+            }
+        }
+
+        function formatSeconds(totalSecs) {
+            const hrs = Math.floor(totalSecs / 3600);
+            const mins = Math.floor((totalSecs % 3600) / 60);
+            const secs = totalSecs % 60;
+            if (hrs > 0) return `${hrs}နာရီ ${mins}မိနစ်`;
+            return `${mins}မိနစ် ${secs}စက္ကန့်`;
+        }
+
+        function switchResultsTab(type) {
+            const btn2D = document.getElementById('res-btn-2d');
+            const btn3D = document.getElementById('res-btn-3d');
+            const content2D = document.getElementById('results-content-2d');
+            const content3D = document.getElementById('results-content-3d');
+
+            if (type === '2D') {
+                btn2D.style.background = '#d97706'; btn2D.style.border = 'none';
+                btn3D.style.background = '#1e293b'; btn3D.style.border = '1px solid #334155';
+                content2D.style.display = 'block'; content3D.style.display = 'none';
+            } else {
+                btn3D.style.background = '#d97706'; btn3D.style.border = 'none';
+                btn2D.style.background = '#1e293b'; btn2D.style.border = '1px solid #334155';
+                content3D.style.display = 'block'; content2D.style.display = 'none';
+            }
+        }
+
+        function openWinningCheckModal() {
+            document.getElementById('win-result-container').style.display = 'none';
+            document.getElementById('win-check-num').value = '';
+            openModal('winning-check-modal');
+        }
+
+        function calculateUserWinnings() {
+            let type = document.getElementById('win-check-type').value;
+            let winningNum = document.getElementById('win-check-num').value.trim();
+            let currentUserName = document.getElementById('login-user').value.trim();
+
+            if (!winningNum) {
+                alert('⚠️ ကျေးဇူးပြု၍ ထွက်လာသည့် ပေါက်ဂဏန်းကို ထည့်ပါ။');
+                return;
+            }
+
+            let filteredBets = userBets.filter(b => b.type === type && b.user.toLowerCase() === currentUserName.toLowerCase());
+            let matchedBets = filteredBets.filter(b => b.number === winningNum);
+
+            let totalWonAmount = 0;
+            let multiplier = type === '3D' ? 700 : 85;
+
+            matchedBets.forEach(b => {
+                totalWonAmount += (b.amount * multiplier);
+            });
+
+            const resultContainer = document.getElementById('win-result-container');
+            const resultText = document.getElementById('win-result-text');
+            resultContainer.style.display = 'block';
+
+            if (matchedBets.length > 0) {
+                userBalance += totalWonAmount;
+                localStorage.setItem('mk_user_balance', userBalance);
+                updateBalanceDisplay();
+                resultText.innerHTML = `🎉 ဂုဏ်ယူပါတယ်! ထွက်ဂဏန်း (${winningNum}) နှင့် ကိုက်ညီပါသည်။<br>- ဆုငွေ: <strong style="color: #4ade80;">${totalWonAmount.toLocaleString()} ကျပ်</strong> (လက်ကျန်ငွေသို့ ဝင်ပြီးပါပြီ)`;
+            } else {
+                resultText.innerHTML = `❌ မပေါက်ပါဘူး။`;
+            }
+        }
+
+        function toggleResultFields() {
+            let type = document.getElementById('add-res-type').value;
+            let slotGroup = document.getElementById('group-2d-slot');
+            slotGroup.style.display = (type === '3D') ? 'none' : 'block';
+        }
+
+        function submitNewResultAndAutoPay() {
+            let type = document.getElementById('add-res-type').value;
+            let date = document.getElementById('add-res-date').value.trim();
+            let number = document.getElementById('add-res-number').value.trim();
+            let slot = document.getElementById('add-res-slot').value;
+
+            if (!date || !number) {
+                alert('⚠️ ကျေးဇူးပြု၍ ရက်စွဲနှင့် ထွက်ဂဏန်းကို ဖြည့်ပါ။');
+                return;
+            }
+
+            if (type === '2D') {
+                results2D.unshift({ date, slot, number });
+                localStorage.setItem('mk_results_2d', JSON.stringify(results2D));
+            } else {
+                results3D.unshift({ date, number });
+                localStorage.setItem('mk_results_3d', JSON.stringify(results3D));
+            }
+            renderResultsTables();
+
+            let multiplier = (type === '3D') ? 700 : (slot.includes('ညနေ') ? 95 : 85);
+            let totalPaidAmount = 0;
+
+            userBets.forEach(bet => {
+                let isSlotMatch = true;
+                if (type === '2D') {
+                    if (slot.includes('မနက်') && !bet.timeSlot.includes('မနက်')) isSlotMatch = false;
+                    if (slot.includes('ညနေ') && !bet.timeSlot.includes('ညနေ')) isSlotMatch = false;
+                }
+                if (bet.type === type && bet.number === number && isSlotMatch) {
+                    let winAmt = bet.amount * multiplier;
+                    totalPaidAmount += winAmt;
+                    let currentLoginUser = document.getElementById('login-user').value.trim();
+                    if (bet.user.toLowerCase() === currentLoginUser.toLowerCase()) {
+                        userBalance += winAmt;
+                        localStorage.setItem('mk_user_balance', userBalance);
+                        updateBalanceDisplay();
+                    }
+                }
+            });
+
+            alert(`✅ ပေါက်စဉ် (${number}) အောင်မြင်စွာ ထည့်သွင်းပြီးပါပြီ။ ဆုငွေ ${totalPaidAmount.toLocaleString()} ကျပ် အော်တို ပေးပြီးပါပြီ။`);
+            document.getElementById('add-res-number').value = '';
+            closeModal('admin-panel-modal');
+        }
+
+        function renderResultsTables() {
+            let tbody2D = document.getElementById('results-table-2d');
+            tbody2D.innerHTML = '';
+            results2D.forEach(item => {
+                let row = document.createElement('tr');
+                row.innerHTML = `<td style="color: var(--accent-gold);">${item.date}</td><td>${item.slot}</td><td><strong style="color: #4ade80;">${item.number}</strong></td>`;
+                tbody2D.appendChild(row);
+            });
+
+            let tbody3D = document.getElementById('results-table-3d');
+            tbody3D.innerHTML = '';
+            results3D.forEach(item => {
+                let row = document.createElement('tr');
+                row.innerHTML = `<td style="color: var(--accent-gold);">${item.date}</td><td><strong style="color: #fef08a;">${item.number}</strong></td>`;
+                tbody3D.appendChild(row);
+            });
+        }
+
+        function select2DTimeSlot(slotName, openH, openM, closeH, closeM) {
+            const now = new Date();
+            const currentTotalMin = now.getHours() * 60 + now.getMinutes();
+            if (currentTotalMin < openH * 60 + openM || currentTotalMin >= closeH * 60 + closeM) {
+                alert('⚠️ ဤစျေးချိန် မဟုတ်သေးပါ (သို့) ပိတ်သွားပါပြီ။');
+                return;
+            }
+            openKeypadScreen(slotName);
+        }
+
+        function select3DTimeSlot(slotName, openH, openM, closeH, closeM) {
+            const now = new Date();
+            if (now.getDate() !== 1 && now.getDate() !== 16) {
+                alert('⚠️ 3D ကို ၁ ရက်နှင့် ၁၆ ရက်များတွင်သာ ထိုးနိုင်ပါသည်။');
+                return;
+            }
+            openKeypadScreen(slotName);
+        }
+
+        function updateBalanceDisplay() {
+            const displayEl = document.getElementById('user-balance-display');
+            displayEl.innerText = isBalanceVisible ? (userBalance.toLocaleString() + ' ကျပ်') : '****** ကျပ်';
+        }
+
+        function toggleBalanceVisibility() {
+            isBalanceVisible = !isBalanceVisible;
+            document.getElementById('eye-btn').innerText = isBalanceVisible ? '👁️' : '🙈';
+            updateBalanceDisplay();
+        }
+
+        function handleLogin() {
+            let userInput = document.getElementById('login-user').value.trim();
+            let passInput = document.getElementById('login-pass').value.trim();
+            let found = registeredUsers.find(u => u.user.toLowerCase() === userInput.toLowerCase() && u.pass === passInput);
+
+            if (found) {
+                localStorage.setItem('mk_logged_in', 'true');
+                localStorage.setItem('mk_user', userInput);
+                document.getElementById('login-screen').style.display = 'none';
+                switchView('home-view');
+                updateBalanceDisplay();
+            } else {
+                alert('❌ အချက်အလက် မှားယွင်းနေပါသည်။');
+            }
+        }
+
+        function openRegisterModal() { openModal('register-modal'); }
+
+        function submitRegister() {
+            let userInput = document.getElementById('reg-user').value.trim();
+            let pass = document.getElementById('reg-pass').value.trim();
+            let cpass = document.getElementById('reg-cpass').value.trim();
+
+            if (!userInput || pass !== cpass) {
+                alert('❌ စကားဝှက် မတူညီပါ သို့မဟုတ် အချက်အလက် လိုအပ်နေပါသည်။');
+                return;
+            }
+            registeredUsers.push({ user: userInput, pass: pass });
+            localStorage.setItem('mk_registered_users', JSON.stringify(registeredUsers));
+            alert('✅ အကောင့်ဖွင့်ခြင်း ပြီးပါပြီ။');
+            closeModal('register-modal');
+        }
+
+        function triggerLogout() {
+            localStorage.removeItem('mk_logged_in');
+            localStorage.removeItem('mk_user');
+            location.reload();
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            window.scrollTo(0, 0);
+            updateSubTotals();
+        }
+
+        function openModal(modalId) { document.getElementById(modalId).classList.add('active'); }
+        function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
+
+        function openDepositMethodModal() { openModal('deposit-method-modal'); }
+        function openWithdrawModal() {
+            document.getElementById('withdraw-balance-text').innerText = userBalance.toLocaleString() + ' ကျပ်';
+            openModal('withdraw-modal');
+        }
+
+        function openDepositDetails(method) {
+            closeModal('deposit-method-modal');
+            openModal('deposit-details-modal');
+            document.getElementById('deposit-title').innerText = (method === 'KPay') ? 'KBZ Pay ဖြင့် ငွေသွင်းရန်' : 'Wave Pay ဖြင့် ငွေသွင်းရန်';
+        }
+
+        function selectAmount(amt) {
+            document.querySelectorAll('.amt-chip').forEach(c => c.classList.remove('selected'));
+            event.target.classList.add('selected');
+            document.getElementById('deposit-amount-input').value = amt;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => alert('Copy ကူးပြီးပါပြီ'));
+        }
+
+        function getExactFormattedTime() {
+            const now = new Date();
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${String(now.getDate()).padStart(2, '0')}/${months[now.getMonth()]}/${now.getFullYear()} ${now.toLocaleTimeString()}`;
+        }
+
+        function submitDeposit() {
+            let amt = parseInt(document.getElementById('deposit-amount-input').value);
+            let txn = document.getElementById('deposit-txn-input').value.trim();
+
+            if (!amt || amt <= 0 || txn.length !== 6) {
+                alert('⚠️ ပမာဏနှင့် လုပ်ငန်းစဉ်နံပါတ် ၆ လုံး သေချာထည့်ပါ။');
+                return;
+            }
+
+            const timeStr = getExactFormattedTime();
+            let currentUserName = document.getElementById('login-user').value || "User";
+
+            let newDeposit = {
+                user: currentUserName,
+                time: timeStr,
+                method: document.getElementById('deposit-title').innerText.includes('KBZ') ? 'KBZ Pay' : 'Wave Pay',
+                txn: txn,
+                amount: amt,
+                status: 'စောင့်ဆိုင်းဆဲ'
+            };
+
+            depositRecords.push(newDeposit);
+            localStorage.setItem('mk_deposit_records', JSON.stringify(depositRecords));
+
+            alert('✅ ငွေသွင်းတောင်းဆိုမှု အောင်မြင်စွာ တင်ပြီးပါပြီ! (ဒိုင် အတည်ပြုသည်အထိ စောင့်ဆိုင်းပါ)');
+            document.getElementById('deposit-amount-input').value = '';
+            document.getElementById('deposit-txn-input').value = '';
+            closeModal('deposit-details-modal');
+        }
+
+        function submitWithdraw() {
+            let phone = document.getElementById('withdraw-phone').value.trim();
+            let amt = parseInt(document.getElementById('withdraw-amount').value);
+
+            if (!phone || amt <= 0 || amt > userBalance) {
+                alert('⚠️ ထည့်သွင်းချက် မှားယွင်းနေပါသည် (သို့) လက်ကျန်ငွေ မလုံလောက်ပါ။');
+                return;
+            }
+
+            let newWithdraw = {
+                user: document.getElementById('login-user').value || "User",
+                time: getExactFormattedTime(),
+                phone: phone,
+                amount: amt,
+                status: 'စောင့်ဆိုင်းဆဲ'
+            };
+
+            withdrawRecords.push(newWithdraw);
+            localStorage.setItem('mk_withdraw_records', JSON.stringify(withdrawRecords));
+
+            alert('✅ ငွေထုတ်တောင်းဆိုမှု တင်ပြီးပါပြီ! ဒိုင်အတည်ပြုသည်အထိ စောင့်ဆိုင်းပါ။');
+            document.getElementById('withdraw-phone').value = '';
+            document.getElementById('withdraw-amount').value = '';
+            closeModal('withdraw-modal');
+        }
+
+        function verifyAdminLogin() {
+            let pass = document.getElementById('admin-pass-input').value.trim();
+            if (pass === "mgkain123@#$") {
+                document.getElementById('admin-pass-input').value = '';
+                closeModal('admin-login-modal');
+                openModal('admin-panel-modal');
+                renderAdminTables();
+            } else {
+                alert('❌ ဒိုင်စကားဝှက် မှားယွင်းနေပါသည်!');
+            }
+        }
+
+        function switchAdminTab(tab) {
+            ['dep', 'wd', 'res'].forEach(t => {
+                document.getElementById(`admin-tab-${t}`).style.background = (t === tab) ? '#d97706' : '#1e293b';
+                document.getElementById(`admin-${t}-section`).style.display = (t === tab) ? 'block' : 'none';
+            });
+            if (tab !== 'res') renderAdminTables();
+        }
+
+        function renderAdminTables() {
+            // LocalStorage မှ အသစ်ဆုံး အချက်အလက်များကို ပြန်ဖတ်ရန်
+            depositRecords = JSON.parse(localStorage.getItem('mk_deposit_records')) || [];
+            withdrawRecords = JSON.parse(localStorage.getItem('mk_withdraw_records')) || [];
+
+            const tbodyDep = document.getElementById('admin-deposit-table-body');
+            tbodyDep.innerHTML = '';
+            if (depositRecords.length === 0) {
+                tbodyDep.innerHTML = `<tr><td colspan="4" style="color: var(--text-sub);">ငွေသွင်းတောင်းဆိုမှု မရှိသေးပါ</td></tr>`;
+            } else {
+                depositRecords.forEach((rec, index) => {
+                    let statusHtml = (rec.status === 'အောင်မြင်ပြီး') ? 
+                        `<span style="color: #4ade80; font-weight: bold;">ငွေသွင်းအောင်မြင်သည်</span>` : 
+                        `<span style="color: #fbbf24; cursor: pointer; text-decoration: underline;" onclick="approveDepositAdmin(${index})">စောင့်ဆိုင်းဆဲ (နှိပ်၍ အတည်ပြုပါ)</span>`;
+
+                    let row = document.createElement('tr');
+                    row.innerHTML = `<td style="font-size: 11px; color: var(--accent-gold);">${rec.time}</td><td style="font-weight: bold; color: #fff;">${rec.user}</td><td>${rec.method} (${rec.txn})</td><td>+${rec.amount.toLocaleString()} ကျပ်<br>${statusHtml}</td>`;
+                    tbodyDep.appendChild(row);
+                });
+            }
+
+            const tbodyWd = document.getElementById('admin-withdraw-table-body');
+            tbodyWd.innerHTML = '';
+            if (withdrawRecords.length === 0) {
+                tbodyWd.innerHTML = `<tr><td colspan="4" style="color: var(--text-sub);">ငွေထုတ်တောင်းဆိုမှု မရှိသေးပါ</td></tr>`;
+            } else {
+                withdrawRecords.forEach((rec, index) => {
+                    let statusHtml = (rec.status === 'အောင်မြင်ပြီး') ? 
+                        `<span style="color: #4ade80; font-weight: bold;">ငွေထုတ်အောင်မြင်သည်</span>` : 
+                        `<span style="color: #fbbf24; cursor: pointer; text-decoration: underline;" onclick="approveWithdrawAdmin(${index})">စောင့်ဆိုင်းဆဲ (နှိပ်၍ အတည်ပြုပါ)</span>`;
+
+                    let row = document.createElement('tr');
+                    row.innerHTML = `<td style="font-size: 11px; color: var(--accent-gold);">${rec.time}</td><td>${rec.user} (${rec.phone})</td><td>-${rec.amount.toLocaleString()} ကျပ်</td><td>${statusHtml}</td>`;
+                    tbodyWd.appendChild(row);
+                });
+            }
+        }
+
+        function approveDepositAdmin(index) {
+            let rec = depositRecords[index];
+            if (rec.status === 'အောင်မြင်ပြီး') return;
+            if (!confirm(`အသုံးပြုသူ (${rec.user}) ၏ ငွေသွင်းပမာဏ ${rec.amount.toLocaleString()} ကျပ် ကို အတည်ပြုပေးမည်မှာ သေချာပါသလား?`)) return;
+
+            // အခြေအနေကို အောင်မြင်ပြီးသို့ ပြောင်းလဲခြင်း
+            depositRecords[index].status = 'အောင်မြင်ပြီး';
+            localStorage.setItem('mk_deposit_records', JSON.stringify(depositRecords));
+
+            // User ၏ လက်ကျန်ငွေသို့ ပေါင်းထည့်ပေးခြင်း
+            let currentLoginUser = document.getElementById('login-user').value.trim();
+            if (rec.user.toLowerCase() === currentLoginUser.toLowerCase()) {
+                userBalance += rec.amount;
+                localStorage.setItem('mk_user_balance', userBalance);
+                updateBalanceDisplay();
+            }
+
+            alert(`✅ ငွေသွင်းမှုကို အတည်ပြုပြီး "ငွေသွင်းအောင်မြင်သည်" သို့ ပြောင်းလဲလိုက်ပါပြီ။`);
+            renderAdminTables();
+        }
+
+        function approveWithdrawAdmin(index) {
+            let rec = withdrawRecords[index];
+            if (rec.status === 'အောင်မြင်ပြီး') return;
+            if (!confirm(`အသုံးပြုသူ (${rec.user}) ၏ ငွေထုတ်ပမာဏ ${rec.amount.toLocaleString()} ကျပ် ကို အတည်ပြုပေးမည်မှာ သေချာပါသလား?`)) return;
+
+            // အခြေအနေကို အောင်မြင်ပြီးသို့ ပြောင်းလဲခြင်း
+            withdrawRecords[index].status = 'အောင်မြင်ပြီး';
+            localStorage.setItem('mk_withdraw_records', JSON.stringify(withdrawRecords));
+
+            // User ၏ လက်ကျန်ငွေမှ နှုတ်ယူခြင်း
+            let currentLoginUser = document.getElementById('login-user').value.trim();
+            if (rec.user.toLowerCase() === currentLoginUser.toLowerCase()) {
+                if (userBalance >= rec.amount) {
+                    userBalance -= rec.amount;
+                    localStorage.setItem('mk_user_balance', userBalance);
+                    updateBalanceDisplay();
+                }
+            }
+
+            alert(`✅ ငွေထုတ်မှုကို အတည်ပြုပြီး "ငွေထုတ်အောင်မြင်သည်" သို့ ပြောင်းလဲလိုက်ပါပြီ။`);
+            renderAdminTables();
+        }
+
+        function openDepositHistoryModal() {
+            closeModal('deposit-method-modal');
+            depositRecords = JSON.parse(localStorage.getItem('mk_deposit_records')) || [];
+            const tbody = document.getElementById('deposit-history-body');
+            tbody.innerHTML = '';
+            let currentLoginUser = document.getElementById('login-user').value.trim();
+            let userDeps = depositRecords.filter(r => r.user && r.user.toLowerCase() === currentLoginUser.toLowerCase());
+
+            if (userDeps.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="color: var(--text-sub);">ငွေသွင်းမှတ်တမ်း မရှိသေးပါ</td></tr>`;
+            } else {
+                userDeps.forEach(rec => {
+                    let statusText = (rec.status === 'အောင်မြင်ပြီး') ? '<b style="color: #4ade80;">ငွေသွင်းအောင်မြင်သည်</b>' : '<b style="color: #fbbf24;">စောင့်ဆိုင်းဆဲ</b>';
+                    tbody.innerHTML += `<tr><td style="font-size:11px; color:var(--accent-gold);">${rec.time}</td><td>${rec.method}</td><td><code>${rec.txn}</code></td><td>+${rec.amount.toLocaleString()} ကျပ်<br>${statusText}</td></tr>`;
+                });
+            }
+            openModal('deposit-history-modal');
+        }
+
+        function openWithdrawHistoryModal() {
+            closeModal('withdraw-modal');
+            withdrawRecords = JSON.parse(localStorage.getItem('mk_withdraw_records')) || [];
+            const tbody = document.getElementById('withdraw-history-body');
+            tbody.innerHTML = '';
+            let currentLoginUser = document.getElementById('login-user').value.trim();
+            let userWds = withdrawRecords.filter(r => r.user && r.user.toLowerCase() === currentLoginUser.toLowerCase());
+
+            if (userWds.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="color: var(--text-sub);">ငွေထုတ်မှတ်တမ်း မရှိသေးပါ</td></tr>`;
+            } else {
+                userWds.forEach(rec => {
+                    let statusText = (rec.status === 'အောင်မြင်ပြီး') ? '<b style="color: #4ade80;">ငွေထုတ်အောင်မြင်သည်</b>' : '<b style="color: #fbbf24;">စောင့်ဆိုင်းဆဲ</b>';
+                    tbody.innerHTML += `<tr><td style="font-size:11px; color:var(--accent-gold);">${rec.time}</td><td>${rec.phone}</td><td>-${rec.amount.toLocaleString()} ကျပ်</td><br>${statusText}</tr>`;
+                });
+            }
+            openModal('withdraw-history-modal');
+        }
+
+        function openHistoryModal(type) {
+            const modal = document.getElementById('history-modal');
+            document.getElementById('history-modal-title').innerText = `${type} ထိုးငွေစာရင်း`;
+            modal.classList.add('active');
+            let tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = '';
+            let currentLoginUser = document.getElementById('login-user').value.trim();
+            let filtered = userBets.filter(b => b.type === type && b.user.toLowerCase() === currentLoginUser.toLowerCase());
+            let sum = 0;
+
+            if (filtered.length === 0) {
+                document.getElementById('history-total-banner').innerText = `စုစုပေါင်းထိုးငွေ: 0 ကျပ်`;
+                tbody.innerHTML = `<tr><td colspan="3" style="color: var(--text-sub);">ထိုးထားခြင်း မရှိသေးပါ</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(b => {
+                sum += b.amount;
+                tbody.innerHTML += `<tr><td><div style="font-size:11px; color:var(--accent-gold);">${b.exactTime}</div><div>${b.timeSlot}</div></td><td><strong>${b.number}</strong></td><td>${b.amount.toLocaleString()} ကျပ်</td></tr>`;
+            });
+            document.getElementById('history-total-banner').innerText = `စုစုပေါင်းထိုးငွေ: ${sum.toLocaleString()} ကျပ်`;
+        }
+
+        function updateSubTotals() {
+            let t2D = 0, t3D = 0;
+            let currentLoginUser = document.getElementById('login-user').value.trim();
+            userBets.forEach(b => {
+                if (b.user.toLowerCase() === currentLoginUser.toLowerCase()) {
+                    if (b.type === '2D') t2D += b.amount;
+                    if (b.type === '3D') t3D += b.amount;
+                }
+            });
+            document.getElementById('sub-total-2d').innerText = t2D.toLocaleString() + ' ကျပ်';
+            document.getElementById('sub-total-3d').innerText = t3D.toLocaleString() + ' ကျပ်';
+        }
+
+        function openKeypadScreen(timeSlot) {
+            activeTimeSlot = timeSlot;
+            closeModal('2d-time-select-modal');
+            closeModal('3d-time-select-modal');
+            document.getElementById('keypad-title').innerText = timeSlot;
+            is3DMode = timeSlot.includes('3D');
+            document.getElementById('btn-left-action').innerText = is3DMode ? 'ပတ်လည်' : 'ခွေ/ပူး';
+            document.getElementById('play-screen').classList.add('active');
+            clearKeypadInputs();
+            updateTotalAmount();
+        }
+
+        function closeKeypadScreen() {
+            document.getElementById('play-screen').classList.remove('active');
+            updateSubTotals();
+        }
+
+        function setActiveField(field) {
+            currentActiveField = field;
+            document.getElementById('input-num').classList.toggle('active-input', field === 'num');
+            document.getElementById('input-amt').classList.toggle('active-input', field === 'amt');
+        }
+
+        function pressKey(val) {
+            if (val === 'ENTER') { submitKeypadBet(); return; }
+            if (currentActiveField === 'num') {
+                currentNumVal += val;
+                document.getElementById('input-num').value = currentNumVal;
+            } else {
+                currentAmtVal += val;
+                document.getElementById('input-amt').value = currentAmtVal;
+            }
+            updatePreviewBox();
+        }
+
+        function switchFieldToAmt() { setActiveField('amt'); }
+
+        function backspaceKeypad() {
+            if (currentActiveField === 'amt') {
+                currentAmtVal = currentAmtVal.slice(0, -1);
+                document.getElementById('input-amt').value = currentAmtVal;
+            } else {
+                currentNumVal = currentNumVal.slice(0, -1);
+                document.getElementById('input-num').value = currentNumVal;
+            }
+            updatePreviewBox();
+        }
+
+        function clearKeypadInputs() {
+            currentNumVal = ''; currentAmtVal = '';
+            setActiveField('num');
+            document.getElementById('input-num').value = '';
+            document.getElementById('input-amt').value = '';
+            updatePreviewBox();
+        }
+
+        function getNumberTotalAmount(type, timeSlot, num) {
+            let total = 0;
+            userBets.forEach(b => {
+                if (b.type === type && b.timeSlot === timeSlot && b.number === num) {
+                    total += b.amount;
+                }
+            });
+            return total;
+        }
+
+        function updatePreviewBox() {
+            const previewEl = document.getElementById('preview-numbers');
+            const countEl = document.getElementById('preview-count');
+            let numInputStr = currentNumVal.trim();
+            if (!numInputStr) { previewEl.innerText = '-'; countEl.innerText = '0 ကွက်'; return; }
+
+            let nums = [];
+            if (numInputStr.includes(',')) {
+                nums = numInputStr.split(',').map(n => n.trim()).filter(n => n);
+            } else {
+                let clean = numInputStr.toUpperCase();
+                if (clean.includes('R')) {
+                    let base = clean.replace('R', '').trim();
+                    if (base.length === 3) nums = getPermutations(base);
+                    else if (base.length === 2) nums = [base, base[1]+base[0]];
+                } else { nums.push(clean); }
+            }
+            previewEl.innerText = nums.join(', ');
+            countEl.innerText = `${nums.length} ကွက်`;
+        }
+
+        function getPermutations(str) {
+            let results = new Set();
+            function permute(arr, memo = '') {
+                if (arr.length === 0) results.add(memo);
+                else {
+                    for (let i = 0; i < arr.length; i++) {
+                        let curr = arr.slice();
+                        let next = curr.splice(i, 1);
+                        permute(curr, memo + next[0]);
+                    }
+                }
+            }
+            permute(str.split(''));
+            return Array.from(results);
+        }
+
+        function handleLeftAction() {
+            let str = currentNumVal.trim().replace('R', '');
+            let amt = parseInt(prompt('ထည့်မည့် ပမာဏ', '100'));
+            if (isNaN(amt) || amt <= 0 || !str) return;
+
+            let nums = is3DMode ? getPermutations(str) : [str, str[1]+str[0]];
+            currentNumVal = nums.join(',');
+            currentAmtVal = String(amt);
+            document.getElementById('input-num').value = currentNumVal;
+            document.getElementById('input-amt').value = currentAmtVal;
+            updatePreviewBox();
+        }
+
+        function submitKeypadBet() {
+            let numInputStr = currentNumVal.trim();
+            let amtVal = parseInt(currentAmtVal);
+            if (!numInputStr || isNaN(amtVal) || amtVal <= 0) {
+                alert('⚠️ ဂဏန်းနှင့် ပမာဏ ဖြည့်ပါ။');
+                return;
+            }
+
+            let nums = numInputStr.includes(',') ? numInputStr.split(',').map(n => n.trim()) : [numInputStr];
+            let gameType = is3DMode ? '3D' : '2D';
+
+            for (let n of nums) {
+                let currentSum = getNumberTotalAmount(gameType, activeTimeSlot, n);
+                if (currentSum >= 500000) {
+                    alert(`⚠️ ဂဏန်း (${n}) မှာ ၅ သိန်းဖိုး ပြည့်သွားပြီဖြစ်၍ (Sold Out) ထိုး၍မရတော့ပါ။`);
+                    return;
+                }
+                if (currentSum + amtVal > 500000) {
+                    alert(`⚠️ ဂဏန်း (${n}) မှာ လက်ရှိထိုးငွေ ${currentSum.toLocaleString()} ကျပ်ရှိပြီး ၅ သိန်းကျော်လွန်၍မရပါ။`);
+                    return;
+                }
+            }
+
+            let totalCost = nums.length * amtVal;
+            if (totalCost > userBalance) {
+                alert('⚠️ လက်ကျန်ငွေ မလုံလောက်ပါ။');
+                return;
+            }
+
+            pendingNumsToProcess = nums;
+            pendingAmtVal = amtVal;
+            document.getElementById('confirm-bet-details').innerText = `စုစုပေါင်း (${nums.length}) ကွက် ၊ တစ်ကွက်လျှင် ${amtVal.toLocaleString()} ကျပ်`;
+            openModal('confirm-bet-modal');
+        }
+
+        function closeConfirmModal() { closeModal('confirm-bet-modal'); }
+
+        function executeConfirmedBet() {
+            closeConfirmModal();
+            let totalCost = pendingNumsToProcess.length * pendingAmtVal;
+            userBalance -= totalCost;
+            localStorage.setItem('mk_user_balance', userBalance);
+            updateBalanceDisplay();
+
+            let exactTimeStr = getExactFormattedTime();
+            let gameType = is3DMode ? '3D' : '2D';
+            let currentLoginUser = document.getElementById('login-user').value.trim() || "User";
+
+            pendingNumsToProcess.forEach(n => {
+                let betObj = { user: currentLoginUser, type: gameType, timeSlot: activeTimeSlot, exactTime: exactTimeStr, number: n, amount: pendingAmtVal };
+                userBets.push(betObj);
+            });
+            localStorage.setItem('mk_user_bets', JSON.stringify(userBets));
+
+            updateTotalAmount();
+            updateSubTotals();
+            alert('✅ စာရင်းတင်သွင်းပြီးပါပြီ!');
+            clearKeypadInputs();
+        }
+
+        function updateTotalAmount() {
+            let total = 0;
+            let currentLoginUser = document.getElementById('login-user').value.trim();
+            userBets.forEach(b => { if (b.user.toLowerCase() === currentLoginUser.toLowerCase()) total += b.amount; });
+            document.getElementById('display-total').innerText = total.toLocaleString();
+        }
+
+        function openGridFromKeypad() {
+            document.getElementById('grid-screen').classList.add('active');
+            buildNumberGrid();
+        }
+
+        function closeGridScreen() { document.getElementById('grid-screen').classList.remove('active'); }
+
+        function buildNumberGrid() {
+            const container = document.getElementById('number-grid-container');
+            container.innerHTML = '';
+            selectedGridNumbers.clear();
+            let totalCount = is3DMode ? 1000 : 100;
+            let padLength = is3DMode ? 3 : 2;
+            let gameType = is3DMode ? '3D' : '2D';
+            container.style.gridTemplateColumns = is3DMode ? 'repeat(4, 1fr)' : 'repeat(6, 1fr)';
+
+            if (is3DMode) {
+                document.getElementById('grid-title').innerText = '3D ရွေးကွက်များ (၅ သိန်းပြည့်ကွက် Sold Out)';
+            } else {
+                document.getElementById('grid-title').innerText = '2D ရွေးကွက်များ (၅ သိန်းပြည့်ကွက် Sold Out)';
+            }
+
+            for (let i = 0; i < totalCount; i++) {
+                let numStr = String(i).padStart(padLength, '0');
+                let box = document.createElement('div');
+                let totalNumBet = getNumberTotalAmount(gameType, activeTimeSlot, numStr);
+                
+                box.className = 'num-box';
+                
+                if (totalNumBet >= 500000) {
+                    box.classList.add('sold-out');
+                    box.innerHTML = `
+                        <span class="num-box-text">${numStr}</span>
+                        <div style="font-size: 9px; color: #fca5a5; margin-bottom: 2px;">Sold Out</div>
+                        <div class="num-box-indicator"></div>
+                    `;
+                } else {
+                    box.innerHTML = `
+                        <span class="num-box-text">${numStr}</span>
+                        <div class="num-box-indicator"></div>
+                    `;
+                    box.onclick = function() {
+                        if (selectedGridNumbers.has(numStr)) {
+                            selectedGridNumbers.delete(numStr);
+                            box.classList.remove('selected');
+                        } else {
+                            selectedGridNumbers.add(numStr);
+                            box.classList.add('selected');
+                        }
+                    };
+                }
+                container.appendChild(box);
+            }
+        }
+
+        function clearSelectedGrid() {
+            selectedGridNumbers.clear();
+            document.querySelectorAll('.num-box:not(.sold-out)').forEach(b => b.classList.remove('selected'));
+        }
+
+        function submitGridBets() {
+            let amt = parseInt(document.getElementById('grid-amount-input').value);
+            if (selectedGridNumbers.size === 0 || isNaN(amt) || amt <= 0) {
+                alert('⚠️ ကွက်များနှင့် ငွေပမာဏ ဖြည့်ပါ။');
+                return;
+            }
+
+            let gameType = is3DMode ? '3D' : '2D';
+            for (let n of selectedGridNumbers) {
+                let currentSum = getNumberTotalAmount(gameType, activeTimeSlot, n);
+                if (currentSum + amt > 500000) {
+                    alert(`⚠️ ရွေးချယ်ထားသော ဂဏန်း (${n}) မှာ ၅ သိန်း ကန့်သတ်ချက် ကျော်လွန်သွားပါမည်။`);
+                    return;
+                }
+            }
+
+            let totalCost = selectedGridNumbers.size * amt;
+            if (totalCost > userBalance) {
+                alert('⚠️ လက်ကျန်ငွေ မလုံလောက်ပါ။');
+                return;
+            }
+
+            userBalance -= totalCost;
+            localStorage.setItem('mk_user_balance', userBalance);
+            updateBalanceDisplay();
+
+            let exactTimeStr = getExactFormattedTime();
+            let currentLoginUser = document.getElementById('login-user').value.trim() || "User";
+
+            selectedGridNumbers.forEach(n => {
+                let betObj = { user: currentLoginUser, type: gameType, timeSlot: activeTimeSlot, exactTime: exactTimeStr, number: n, amount: amt };
+                userBets.push(betObj);
+            });
+            localStorage.setItem('mk_user_bets', JSON.stringify(userBets));
+
+            updateTotalAmount();
+            updateSubTotals();
+            alert('✅ ရွေးကွက်စာရင်း တင်သွင်းပြီးပါပြီ!');
+            clearSelectedGrid();
+            closeGridScreen();
+        }
+    </script>
+</body>
+</html>
