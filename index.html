@@ -16,7 +16,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MK 2D/3D - Local Storage Admin System</title>
+    <title>MK 2D/3D - Realtime Firebase & Sold Out System</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
         :root {
             --bg-color: #0b0f19;
@@ -905,6 +908,7 @@
             background: #fbbf24;
         }
 
+        /* Sold Out Style (5 Lakhs Full -> Red & Disabled) */
         .num-box.sold-out {
             background: #7f1d1d !important;
             border-color: #ef4444 !important;
@@ -1035,7 +1039,7 @@
         </div>
     </div>
 
-    <!-- ADMIN PANEL MODAL -->
+    <!-- ADMIN PANEL MODAL (ဒိုင်စာမျက်နှာ - ငွေသွင်းငွေထုတ်နှင့် ပေါက်စဉ်ထည့်ရန်သာ) -->
     <div id="admin-panel-modal" class="modal">
         <div class="modal-content" style="max-width: 550px;">
             <div class="modal-header">
@@ -1052,7 +1056,7 @@
 
             <!-- Admin Deposit List -->
             <div id="admin-dep-section">
-                <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">အသုံးပြုသူများ တင်ထားသော ငွေသွင်းတောင်းဆိုမှုများ:</p>
+                <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">အသုံးပြုသူများ တင်ထားသော ငွေသွင်းတောင်းဆိုမှုများ (Realtime):</p>
                 <table>
                     <thead>
                         <tr>
@@ -1088,7 +1092,7 @@
 
             <!-- Admin Add Result Section -->
             <div id="admin-res-section" style="display: none;">
-                <p style="font-size: 13px; color: var(--accent-gold); margin-bottom: 12px;">🎯 ပေါက်စဉ်အသစ် ထည့်သွင်းခြင်း:</p>
+                <p style="font-size: 13px; color: var(--accent-gold); margin-bottom: 12px;">🎯 ပေါက်စဉ်အသစ် ထည့်သွင်းခြင်း (ဂဏန်းထည့်တာနဲ့ ပေါက်သူများဆီ ဆုငွေအော်တို ဝင်ပါမည်):</p>
                 
                 <div class="login-input-group">
                     <label>ဂိမ်းအမျိုးအစား</label>
@@ -1100,7 +1104,7 @@
 
                 <div class="login-input-group">
                     <label>ရက်စွဲ</label>
-                    <input type="text" id="add-res-date" class="custom-input" placeholder="ရက်စွဲထည့်ပါ" value="05/Nov/2026">
+                    <input type="text" id="add-res-date" class="custom-input" placeholder="ရက်စွဲထည့်ပါ" value="04/Nov/2026">
                 </div>
 
                 <div id="group-2d-slot" class="login-input-group">
@@ -1124,6 +1128,7 @@
     <!-- 1. HOME / DASHBOARD VIEW -->
     <div id="home-view" class="view-section">
         <div class="header-profile">
+            <!-- ဒိုင်ခလုတ်ကို ဖျောက်ထားပြီး လိုအပ်မှ ဝင်နိုင်ရန် Admin Login ကို အောက်ခြေ သို့မဟုတ် Settings ထဲ ထည့်သွင်းနိုင်သည်၊ သို့သော် လွယ်ကူစေရန် ဤနေရာတွင် Password တောင်းမည့် ခလုတ်အဖြစ် ထားရှိသည် -->
             <button class="copy-btn" style="background: #d97706; padding: 8px 12px; font-size: 13px;" onclick="openModal('admin-login-modal')">🛡️ ဒိုင် (Admin) စာမျက်နှာ</button>
             <div class="settings-icon" onclick="openModal('settings-modal')">⚙️</div>
         </div>
@@ -1146,7 +1151,7 @@
             </div>
 
             <div class="notice-bar">
-                📢 MK 2D/3D - LocalStorage Admin System
+                📢 MK 2D/3D - Realtime Firebase & Sold Out System
             </div>
 
             <div class="action-grid">
@@ -1267,7 +1272,9 @@
                             <th>ထွက်ဂဏန်း</th>
                         </tr>
                     </thead>
-                    <tbody id="results-table-2d"></tbody>
+                    <tbody id="results-table-2d">
+                        <!-- Dynamic rendered via JS -->
+                    </tbody>
                 </table>
             </div>
 
@@ -1280,7 +1287,9 @@
                             <th>3D ထွက်ဂဏန်း</th>
                         </tr>
                     </thead>
-                    <tbody id="results-table-3d"></tbody>
+                    <tbody id="results-table-3d">
+                        <!-- Dynamic rendered via JS -->
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -1450,7 +1459,9 @@
                     </tr>
                 </thead>
                 <tbody id="deposit-history-body">
-                    <tr><td colspan="4" style="color: var(--text-sub);">ငွေသွင်းမှတ်တမ်း မရှိသေးပါ</td></tr>
+                    <tr>
+                        <td colspan="4" style="color: var(--text-sub);">ငွေသွင်းမှတ်တမ်း မရှိသေးပါ</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -1504,7 +1515,9 @@
                     </tr>
                 </thead>
                 <tbody id="withdraw-history-body">
-                    <tr><td colspan="4" style="color: var(--text-sub);">ငွေထုတ်မှတ်တမ်း မရှိသေးပါ</td></tr>
+                    <tr>
+                        <td colspan="4" style="color: var(--text-sub);">ငွေထုတ်မှတ်တမ်း မရှိသေးပါ</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -1529,7 +1542,9 @@
                     </tr>
                 </thead>
                 <tbody id="history-table-body">
-                    <tr><td colspan="3" style="color: var(--text-sub);">ထိုးထားခြင်း မရှိသေးပါ</td></tr>
+                    <tr>
+                        <td colspan="3" style="color: var(--text-sub);">ထိုးထားခြင်း မရှိသေးပါ</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -1685,6 +1700,13 @@
     </div>
 
     <script>
+        // FIREBASE CONFIGURATION
+        const firebaseConfig = {
+            databaseURL: "https://mk2d3d-default-rtdb.asia-southeast1.firebasedatabase.app/"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         let registeredUsers = JSON.parse(localStorage.getItem('mk_registered_users')) || [
             { user: "09698118418", pass: "123456" }
         ];
@@ -1692,9 +1714,28 @@
         let userBalance = parseFloat(localStorage.getItem('mk_user_balance')) || 0;
         let isBalanceVisible = true;
         
-        let userBets = JSON.parse(localStorage.getItem('mk_user_bets')) || [];
-        let depositRecords = JSON.parse(localStorage.getItem('mk_deposit_records')) || [];
-        let withdrawRecords = JSON.parse(localStorage.getItem('mk_withdraw_records')) || [];
+        let userBets = [];
+        let depositRecords = [];
+        let withdrawRecords = [];
+
+        // Realtime Listeners from Firebase
+        db.ref('bets').on('value', (snapshot) => {
+            const data = snapshot.val();
+            userBets = data ? Object.values(data) : [];
+            updateSubTotals();
+        });
+
+        db.ref('deposits').on('value', (snapshot) => {
+            const data = snapshot.val();
+            depositRecords = data ? Object.values(data) : [];
+            renderAdminTables();
+        });
+
+        db.ref('withdraws').on('value', (snapshot) => {
+            const data = snapshot.val();
+            withdrawRecords = data ? Object.values(data) : [];
+            renderAdminTables();
+        });
 
         let activeTimeSlot = '';
         let currentActiveField = 'num'; 
@@ -1706,12 +1747,12 @@
         let pendingNumsToProcess = [];
         let pendingAmtVal = 0;
 
-        let results2D = JSON.parse(localStorage.getItem('mk_results_2d')) || [
-            { date: "05/Nov/2026", slot: "မနက်ပိုင်း (12:01)", number: "97" },
-            { date: "04/Nov/2026", slot: "ညနေပိုင်း (04:30)", number: "29" }
+        let results2D = [
+            { date: "04/Nov/2026", slot: "မနက်ပိုင်း (12:01)", number: "97" },
+            { date: "03/Nov/2026", slot: "ညနေပိုင်း (04:30)", number: "29" }
         ];
 
-        let results3D = JSON.parse(localStorage.getItem('mk_results_3d')) || [
+        let results3D = [
             { date: "2026-11-01", number: "224" },
             { date: "2026-10-16", number: "781" }
         ];
@@ -1883,13 +1924,8 @@
                 return;
             }
 
-            if (type === '2D') {
-                results2D.unshift({ date, slot, number });
-                localStorage.setItem('mk_results_2d', JSON.stringify(results2D));
-            } else {
-                results3D.unshift({ date, number });
-                localStorage.setItem('mk_results_3d', JSON.stringify(results3D));
-            }
+            if (type === '2D') results2D.unshift({ date, slot, number });
+            else results3D.unshift({ date, number });
             renderResultsTables();
 
             let multiplier = (type === '3D') ? 700 : (slot.includes('ညနေ') ? 95 : 85);
@@ -2043,6 +2079,9 @@
             return `${String(now.getDate()).padStart(2, '0')}/${months[now.getMonth()]}/${now.getFullYear()} ${now.toLocaleTimeString()}`;
         }
 
+        const TELEGRAM_BOT_TOKEN = "9271299773:AAGN3Yr7uRZfEemhaxqK-7aPUUFQx8Lusdw";
+        const TELEGRAM_CHAT_ID = "9274490522";
+
         function submitDeposit() {
             let amt = parseInt(document.getElementById('deposit-amount-input').value);
             let txn = document.getElementById('deposit-txn-input').value.trim();
@@ -2064,39 +2103,39 @@
                 status: 'စောင့်ဆိုင်းဆဲ'
             };
 
-            depositRecords.push(newDeposit);
-            localStorage.setItem('mk_deposit_records', JSON.stringify(depositRecords));
+            // Save to Firebase Realtime Database
+            db.ref('deposits').push(newDeposit);
+            sendDepositNotificationToTelegram(currentUserName, txn, amt);
 
-            alert('✅ ငွေသွင်းတောင်းဆိုမှု အောင်မြင်စွာ တင်ပြီးပါပြီ! (ဒိုင် အတည်ပြုသည်အထိ စောင့်ဆိုင်းပါ)');
+            alert('✅ ငွေသွင်းတောင်းဆိုမှု အောင်မြင်စွာ တင်ပြီးပါပြီ!');
             document.getElementById('deposit-amount-input').value = '';
             document.getElementById('deposit-txn-input').value = '';
             closeModal('deposit-details-modal');
         }
 
-        function submitWithdraw() {
-            let phone = document.getElementById('withdraw-phone').value.trim();
-            let amt = parseInt(document.getElementById('withdraw-amount').value);
-
-            if (!phone || amt <= 0 || amt > userBalance) {
-                alert('⚠️ ထည့်သွင်းချက် မှားယွင်းနေပါသည် (သို့) လက်ကျန်ငွေ မလုံလောက်ပါ။');
-                return;
-            }
-
-            let newWithdraw = {
-                user: document.getElementById('login-user').value || "User",
-                time: getExactFormattedTime(),
-                phone: phone,
-                amount: amt,
-                status: 'စောင့်ဆိုင်းဆဲ'
+        function sendDepositNotificationToTelegram(userName, txn, amount) {
+            const message = `💳 <b>MK 2D/3D ငွေသွင်းတောင်းဆိုမှုအသစ်!</b>\n👤 <b>အမည်:</b> ${userName}\n🔢 <b>Txn ID:</b> <code>${txn}</code>\n💰 <b>ပမာဏ:</b> ${amount.toLocaleString()} ကျပ်`;
+            
+            // ထည့်သွင်းပေးလိုက်သော Inline Keyboard ခလုတ်များ (Telegram တွင် နှိပ်၍ အတည်ပြုနိုင်ရန်)
+            const inlineKeyboard = {
+                inline_keyboard: [
+                    [
+                        { text: "✅ အတည်ပြုမည်", callback_data: `approve_dep_${txn}` },
+                        { text: "❌ ငြင်းပယ်မည်", callback_data: `reject_dep_${txn}` }
+                    ]
+                ]
             };
 
-            withdrawRecords.push(newWithdraw);
-            localStorage.setItem('mk_withdraw_records', JSON.stringify(withdrawRecords));
-
-            alert('✅ ငွေထုတ်တောင်းဆိုမှု တင်ပြီးပါပြီ! ဒိုင်အတည်ပြုသည်အထိ စောင့်ဆိုင်းပါ။');
-            document.getElementById('withdraw-phone').value = '';
-            document.getElementById('withdraw-amount').value = '';
-            closeModal('withdraw-modal');
+            fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    chat_id: TELEGRAM_CHAT_ID, 
+                    text: message, 
+                    parse_mode: "HTML",
+                    reply_markup: inlineKeyboard
+                })
+            }).catch(err => console.log(err));
         }
 
         function verifyAdminLogin() {
@@ -2120,19 +2159,15 @@
         }
 
         function renderAdminTables() {
-            // LocalStorage မှ အသစ်ဆုံး အချက်အလက်များကို ပြန်ဖတ်ရန်
-            depositRecords = JSON.parse(localStorage.getItem('mk_deposit_records')) || [];
-            withdrawRecords = JSON.parse(localStorage.getItem('mk_withdraw_records')) || [];
-
             const tbodyDep = document.getElementById('admin-deposit-table-body');
             tbodyDep.innerHTML = '';
             if (depositRecords.length === 0) {
                 tbodyDep.innerHTML = `<tr><td colspan="4" style="color: var(--text-sub);">ငွေသွင်းတောင်းဆိုမှု မရှိသေးပါ</td></tr>`;
             } else {
                 depositRecords.forEach((rec, index) => {
-                    let statusHtml = (rec.status === 'အောင်မြင်ပြီး') ? 
-                        `<span style="color: #4ade80; font-weight: bold;">ငွေသွင်းအောင်မြင်သည်</span>` : 
-                        `<span style="color: #fbbf24; cursor: pointer; text-decoration: underline;" onclick="approveDepositAdmin(${index})">စောင့်ဆိုင်းဆဲ (နှိပ်၍ အတည်ပြုပါ)</span>`;
+                    let statusHtml = rec.status === 'စောင့်ဆိုင်းဆဲ' ? 
+                        `<span style="color: #fbbf24; cursor: pointer; text-decoration: underline;" onclick="approveDepositAdmin(${index})">စောင့်ဆိုင်းဆဲ (နှိပ်၍ အတည်ပြုပါ)</span>` :
+                        `<span style="color: #4ade80; font-weight: bold;">အောင်မြင်ပြီး</span>`;
 
                     let row = document.createElement('tr');
                     row.innerHTML = `<td style="font-size: 11px; color: var(--accent-gold);">${rec.time}</td><td style="font-weight: bold; color: #fff;">${rec.user}</td><td>${rec.method} (${rec.txn})</td><td>+${rec.amount.toLocaleString()} ကျပ်<br>${statusHtml}</td>`;
@@ -2146,9 +2181,9 @@
                 tbodyWd.innerHTML = `<tr><td colspan="4" style="color: var(--text-sub);">ငွေထုတ်တောင်းဆိုမှု မရှိသေးပါ</td></tr>`;
             } else {
                 withdrawRecords.forEach((rec, index) => {
-                    let statusHtml = (rec.status === 'အောင်မြင်ပြီး') ? 
-                        `<span style="color: #4ade80; font-weight: bold;">ငွေထုတ်အောင်မြင်သည်</span>` : 
-                        `<span style="color: #fbbf24; cursor: pointer; text-decoration: underline;" onclick="approveWithdrawAdmin(${index})">စောင့်ဆိုင်းဆဲ (နှိပ်၍ အတည်ပြုပါ)</span>`;
+                    let statusHtml = rec.status === 'ဆောင်ရွက်ဆဲ' ? 
+                        `<span style="color: #fbbf24; cursor: pointer; text-decoration: underline;" onclick="approveWithdrawAdmin(${index})">ဆောင်ရွက်ဆဲ (အတည်ပြုရန်)</span>` :
+                        `<span style="color: #4ade80;">အောင်မြင်</span>`;
 
                     let row = document.createElement('tr');
                     row.innerHTML = `<td style="font-size: 11px; color: var(--accent-gold);">${rec.time}</td><td>${rec.user} (${rec.phone})</td><td>-${rec.amount.toLocaleString()} ကျပ်</td><td>${statusHtml}</td>`;
@@ -2160,61 +2195,75 @@
         function approveDepositAdmin(index) {
             let rec = depositRecords[index];
             if (rec.status === 'အောင်မြင်ပြီး') return;
-            if (!confirm(`အသုံးပြုသူ (${rec.user}) ၏ ငွေသွင်းပမာဏ ${rec.amount.toLocaleString()} ကျပ် ကို အတည်ပြုပေးမည်မှာ သေချာပါသလား?`)) return;
+            if (!confirm(`ငွေပမာဏ ${rec.amount.toLocaleString()} ကျပ် ကို အတည်ပြုပေးမည်မှာ သေချာပါသလား?`)) return;
 
-            // အခြေအနေကို အောင်မြင်ပြီးသို့ ပြောင်းလဲခြင်း
-            depositRecords[index].status = 'အောင်မြင်ပြီး';
-            localStorage.setItem('mk_deposit_records', JSON.stringify(depositRecords));
+            db.ref('deposits').once('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    const keys = Object.keys(data);
+                    const targetKey = keys[index];
+                    db.ref(`deposits/${targetKey}`).update({ status: 'အောင်မြင်ပြီး' });
+                }
+            });
 
-            // User ၏ လက်ကျန်ငွေသို့ ပေါင်းထည့်ပေးခြင်း
-            let currentLoginUser = document.getElementById('login-user').value.trim();
-            if (rec.user.toLowerCase() === currentLoginUser.toLowerCase()) {
-                userBalance += rec.amount;
-                localStorage.setItem('mk_user_balance', userBalance);
-                updateBalanceDisplay();
-            }
-
-            alert(`✅ ငွေသွင်းမှုကို အတည်ပြုပြီး "ငွေသွင်းအောင်မြင်သည်" သို့ ပြောင်းလဲလိုက်ပါပြီ။`);
-            renderAdminTables();
+            alert('✅ ငွေသွင်းမှုကို အတည်ပြုပြီးပါပြီ။');
         }
 
         function approveWithdrawAdmin(index) {
             let rec = withdrawRecords[index];
-            if (rec.status === 'အောင်မြင်ပြီး') return;
-            if (!confirm(`အသုံးပြုသူ (${rec.user}) ၏ ငွေထုတ်ပမာဏ ${rec.amount.toLocaleString()} ကျပ် ကို အတည်ပြုပေးမည်မှာ သေချာပါသလား?`)) return;
+            if (rec.status === 'အောင်မြင်') return;
+            if (!confirm('ငွေထုတ်မှု အောင်မြင်ကြောင်း အတည်ပြုမည်လား?')) return;
 
-            // အခြေအနေကို အောင်မြင်ပြီးသို့ ပြောင်းလဲခြင်း
-            withdrawRecords[index].status = 'အောင်မြင်ပြီး';
-            localStorage.setItem('mk_withdraw_records', JSON.stringify(withdrawRecords));
-
-            // User ၏ လက်ကျန်ငွေမှ နှုတ်ယူခြင်း
-            let currentLoginUser = document.getElementById('login-user').value.trim();
-            if (rec.user.toLowerCase() === currentLoginUser.toLowerCase()) {
-                if (userBalance >= rec.amount) {
-                    userBalance -= rec.amount;
-                    localStorage.setItem('mk_user_balance', userBalance);
-                    updateBalanceDisplay();
+            db.ref('withdraws').once('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    const keys = Object.keys(data);
+                    const targetKey = keys[index];
+                    db.ref(`withdraws/${targetKey}`).update({ status: 'အောင်မြင်' });
                 }
+            });
+            alert('✅ ငွေထုတ်မှု အတည်ပြုပြီးပါပြီ။');
+        }
+
+        function submitWithdraw() {
+            let phone = document.getElementById('withdraw-phone').value.trim();
+            let amt = parseInt(document.getElementById('withdraw-amount').value);
+
+            if (!phone || amt <= 0 || amt > userBalance) {
+                alert('⚠️ ထည့်သွင်းချက် မှားယွင်းနေပါသည် (သို့) လက်ကျန်ငွေ မလုံလောက်ပါ။');
+                return;
             }
 
-            alert(`✅ ငွေထုတ်မှုကို အတည်ပြုပြီး "ငွေထုတ်အောင်မြင်သည်" သို့ ပြောင်းလဲလိုက်ပါပြီ။`);
-            renderAdminTables();
+            userBalance -= amt;
+            localStorage.setItem('mk_user_balance', userBalance);
+            updateBalanceDisplay();
+
+            let newWithdraw = {
+                user: document.getElementById('login-user').value || "User",
+                time: getExactFormattedTime(),
+                phone: phone,
+                amount: amt,
+                status: 'ဆောင်ရွက်ဆဲ'
+            };
+
+            db.ref('withdraws').push(newWithdraw);
+            alert('✅ ငွေထုတ်တောင်းဆိုမှု ပေးပို့ပြီးပါပြီ!');
+            closeModal('withdraw-modal');
         }
 
         function openDepositHistoryModal() {
             closeModal('deposit-method-modal');
-            depositRecords = JSON.parse(localStorage.getItem('mk_deposit_records')) || [];
             const tbody = document.getElementById('deposit-history-body');
             tbody.innerHTML = '';
             let currentLoginUser = document.getElementById('login-user').value.trim();
+            // Firebase မှ Realtime ရလာသော depositRecords ကို သုံးထားသဖြင့် အပြင်ထွက်လည်း မပျောက်ဘဲ မှန်ကန်စွာ ပေါ်မည်
             let userDeps = depositRecords.filter(r => r.user && r.user.toLowerCase() === currentLoginUser.toLowerCase());
 
             if (userDeps.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" style="color: var(--text-sub);">ငွေသွင်းမှတ်တမ်း မရှိသေးပါ</td></tr>`;
             } else {
                 userDeps.forEach(rec => {
-                    let statusText = (rec.status === 'အောင်မြင်ပြီး') ? '<b style="color: #4ade80;">ငွေသွင်းအောင်မြင်သည်</b>' : '<b style="color: #fbbf24;">စောင့်ဆိုင်းဆဲ</b>';
-                    tbody.innerHTML += `<tr><td style="font-size:11px; color:var(--accent-gold);">${rec.time}</td><td>${rec.method}</td><td><code>${rec.txn}</code></td><td>+${rec.amount.toLocaleString()} ကျပ်<br>${statusText}</td></tr>`;
+                    tbody.innerHTML += `<tr><td style="font-size:11px; color:var(--accent-gold);">${rec.time}</td><td>${rec.method}</td><td><code>${rec.txn}</code></td><td>+${rec.amount.toLocaleString()} ကျပ်<br><b>${rec.status}</b></td></tr>`;
                 });
             }
             openModal('deposit-history-modal');
@@ -2222,7 +2271,6 @@
 
         function openWithdrawHistoryModal() {
             closeModal('withdraw-modal');
-            withdrawRecords = JSON.parse(localStorage.getItem('mk_withdraw_records')) || [];
             const tbody = document.getElementById('withdraw-history-body');
             tbody.innerHTML = '';
             let currentLoginUser = document.getElementById('login-user').value.trim();
@@ -2232,8 +2280,7 @@
                 tbody.innerHTML = `<tr><td colspan="4" style="color: var(--text-sub);">ငွေထုတ်မှတ်တမ်း မရှိသေးပါ</td></tr>`;
             } else {
                 userWds.forEach(rec => {
-                    let statusText = (rec.status === 'အောင်မြင်ပြီး') ? '<b style="color: #4ade80;">ငွေထုတ်အောင်မြင်သည်</b>' : '<b style="color: #fbbf24;">စောင့်ဆိုင်းဆဲ</b>';
-                    tbody.innerHTML += `<tr><td style="font-size:11px; color:var(--accent-gold);">${rec.time}</td><td>${rec.phone}</td><td>-${rec.amount.toLocaleString()} ကျပ်</td><br>${statusText}</tr>`;
+                    tbody.innerHTML += `<tr><td style="font-size:11px; color:var(--accent-gold);">${rec.time}</td><td>${rec.phone}</td><td>-${rec.amount.toLocaleString()} ကျပ်</td><td><b>${rec.status}</b></td></tr>`;
                 });
             }
             openModal('withdraw-history-modal');
@@ -2441,9 +2488,8 @@
 
             pendingNumsToProcess.forEach(n => {
                 let betObj = { user: currentLoginUser, type: gameType, timeSlot: activeTimeSlot, exactTime: exactTimeStr, number: n, amount: pendingAmtVal };
-                userBets.push(betObj);
+                db.ref('bets').push(betObj);
             });
-            localStorage.setItem('mk_user_bets', JSON.stringify(userBets));
 
             updateTotalAmount();
             updateSubTotals();
@@ -2549,9 +2595,8 @@
 
             selectedGridNumbers.forEach(n => {
                 let betObj = { user: currentLoginUser, type: gameType, timeSlot: activeTimeSlot, exactTime: exactTimeStr, number: n, amount: amt };
-                userBets.push(betObj);
+                db.ref('bets').push(betObj);
             });
-            localStorage.setItem('mk_user_bets', JSON.stringify(userBets));
 
             updateTotalAmount();
             updateSubTotals();
