@@ -1,37 +1,29 @@
-// Telegram တွင် ခလုတ်နှိပ်ခြင်းကို လက်ခံဆောင်ရွက်ရန် (Updated)
-app.post('/webhook', async (req, res) => {
-  try {
-    const update = req.body;
+import axios from 'axios';
 
-    if (update.callback_query) {
-      const callbackQuery = update.callback_query;
-      const data = callbackQuery.data;
-      const chatId = callbackQuery.message.chat.id;
-      const messageId = callbackQuery.message.message_id;
-      const originalText = callbackQuery.message.text;
+const TOKEN = '9271299773:AAGN3Yr7uRZfEemhaxqK-7aPUUFQx8Lusdw';
 
-      // ပထမဦးစွာ Telegram ကို callback query လက်ခံရရှိကြောင်း ချက်ချင်း အကြောင်းပြန်ပါ (Error မတက်စေရန်)
-      await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
-        callback_query_id: callbackQuery.id,
-        text: data === 'approve' ? '✅ ငွေသွင်းမှုကို အတည်ပြုပြီးပါပြီ။' : '❌ ငွေသွင်းတောင်းဆိုမှုကို ငြင်းပယ်လိုက်ပါပြီ။'
-      });
-
-      // မက်ဆေ့ချ်စာသားကို ပြောင်းလဲခြင်း
-      const statusText = data === 'approve' ? 
-        `\n\n<b>STATUS: ✅ ငွေသွင်းအတည်ပြုပြီးပါပြီ</b>` : 
-        `\n\n<b>STATUS: ❌ ငွေသွင်းငြင်းပယ်လိုက်ပါပြီ</b>`;
-
-      await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageText`, {
-        chat_id: chatId,
-        message_id: messageId,
-        text: originalText + statusText,
-        parse_mode: 'HTML',
-        reply_markup: { inline_keyboard: [] } // ခလုတ်များကို ဖယ်ရှားပစ်ခြင်း
-      });
+export default async function handler(req, res) {
+  if (req.method === 'POST') {
+    try {
+      const q = req.body?.callback_query;
+      if (q) {
+        await axios.post(`https://api.telegram.org/bot${TOKEN}/answerCallbackQuery`, {
+          callback_query_id: q.id,
+          text: 'အောင်မြင်ပါပြီ'
+        });
+        await axios.post(`https://api.telegram.org/bot${TOKEN}/editMessageText`, {
+          chat_id: q.message.chat.id,
+          message_id: q.message.message_id,
+          text: q.message.text + '\n\n<b>STATUS: ✅ ပြီးစီးပါပြီ</b>',
+          parse_mode: 'HTML',
+          reply_markup: { inline_keyboard: [] }
+        });
+      }
+    } catch (e) {
+      console.error(e);
     }
-  } catch (err) {
-    console.error('Webhook Error:', err.message);
+    return res.status(200).send('OK');
   }
 
-  return res.status(200).send('OK');
-});
+  return res.status(200).send('Bot is active');
+}
